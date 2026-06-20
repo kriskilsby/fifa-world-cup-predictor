@@ -1,41 +1,15 @@
 // frontend/app/page.tsx
 "use client";
 
-import { match } from "assert/strict";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
-type Team = {
-  name: string;
-  crest: string;
-  tla?: string;
-};
+import DashboardStats from "./components/DashboardStats";
+import Filters from "./components/Filters";
+import MatchCard from "./components/MatchCard";
+import { Match } from "./types/match";
+import { Prediction } from "./types/prediction";
+import TeamAccuracy from "./components/TeamAccuracy";
 
-type Match = {
-  id: number;
-  utcDate: string;
-  group: string;
-  status: string;
-
-  homeTeam: Team;
-  awayTeam: Team;
-
-  score: {
-    fullTime: {
-      home: number | null;
-      away: number | null;
-    };
-  };
-};
-
-type Prediction = {
-  predictedHomeScore: number;
-  predictedAwayScore: number;
-  homeWinProbability: number;
-  awayWinProbability: number;
-  match: {
-    id: number;
-  };
-};
 
 export default function HomePage() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -45,12 +19,15 @@ export default function HomePage() {
   const [selectedGroup, setSelectedGroup] = useState("ALL");
   const [predictions, setPredictions] = useState<Prediction[]>([]);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   async function fetchMatches() {
     try {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("http://localhost:3000/matches");
+      // const res = await fetch("http://localhost:3000/matches");
+      const res = await fetch(`${API_URL}/matches`);
 
       if (!res.ok) {
         throw new Error(`Failed to fetch matches: ${res.status}`);
@@ -68,7 +45,7 @@ export default function HomePage() {
   async function fetchPredictions() {
     try {
       const res = await fetch(
-        "http://localhost:3000/predictions/model"
+    `${API_URL}/predictions/model`
       );
 
       if (!res.ok) {
@@ -92,7 +69,7 @@ export default function HomePage() {
     try {
       setLoading(true);
 
-      await fetch("http://localhost:3000/matches/refresh", {
+      await fetch(`${API_URL}/matches/refresh`, {
         method: "POST",
       });
 
@@ -101,39 +78,6 @@ export default function HomePage() {
       console.error(err);
     } finally {
       setLoading(false);
-    }
-  }
-
-  function getStatusColor(status: string) {
-    switch (status) {
-      case "FINISHED":
-        return "bg-slate-600";
-      case "IN_PLAY":
-        return "bg-green-600";
-      default:
-        return "bg-blue-600";
-    }
-  }
-
-  function formatDate(date: string) {
-    return new Date(date).toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
-  function getStatusText(status: string) {
-    switch (status) {
-      case "IN_PLAY":
-        return "LIVE";
-      case "FINISHED":
-        return "FT";
-      case "TIMED":
-        return "UPCOMING";
-      default:
-        return status;
     }
   }
 
@@ -185,23 +129,50 @@ export default function HomePage() {
     new Set(matches.map((m) => m.group))
   ).filter(Boolean);
 
-  const filteredMatches = matches.filter((match) => {
-    const matchesSearch =
-      match.homeTeam.name.toLowerCase().includes(search.toLowerCase()) ||
-      match.awayTeam.name.toLowerCase().includes(search.toLowerCase());
+  // const filteredMatches = matches.filter((match) => {
+  //   const matchesSearch =
+  //     match.homeTeam.name.toLowerCase().includes(search.toLowerCase()) ||
+  //     match.awayTeam.name.toLowerCase().includes(search.toLowerCase());
 
-    const matchesGroup =
-      selectedGroup === "ALL" || match.group === selectedGroup;
+  //   const matchesGroup =
+  //     selectedGroup === "ALL" || match.group === selectedGroup;
 
-    return matchesSearch && matchesGroup;
-  });
+  //   return matchesSearch && matchesGroup;
+  // });
 
-  const predictionMap = new Map(
-    predictions.map((prediction) => [
-      prediction.match.id,
-      prediction,
-    ])
-  );
+  const filteredMatches = useMemo(() => {
+    return matches.filter((match) => {
+      const matchesSearch =
+        match.homeTeam.name
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
+        match.awayTeam.name
+          .toLowerCase()
+          .includes(search.toLowerCase());
+
+      const matchesGroup =
+        selectedGroup === "ALL" ||
+        match.group === selectedGroup;
+
+      return matchesSearch && matchesGroup;
+    });
+  }, [matches, search, selectedGroup]);
+
+  // const predictionMap = new Map(
+  //   predictions.map((prediction) => [
+  //     prediction.match.id,
+  //     prediction,
+  //   ])
+  // );
+
+  const predictionMap = useMemo(() => {
+    return new Map(
+      predictions.map((prediction) => [
+        prediction.match.id,
+        prediction,
+      ])
+    );
+  }, [predictions]);
 
   let exactScores = 0;
   let correctResults = 0;
@@ -327,279 +298,76 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">
-          World Cup Matches
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold">
+          FIFA World Cup Predictor
         </h1>
 
-        <div className="mb-6 rounded-xl bg-slate-900 border border-slate-800 p-4">
-          <h2 className="text-xl font-bold mb-3">
-            Model Performance
-          </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <div className="text-green-400 text-2xl font-bold">
-                {exactScores}
-              </div>
-              <div className="text-sm text-gray-400">
-                Exact Scores
-              </div>
-            </div>
-
-            <div>
-              <div className="text-yellow-400 text-2xl font-bold">
-                {correctResults}
-              </div>
-              <div className="text-sm text-gray-400">
-                Correct Results
-              </div>
-            </div>
-
-            <div>
-              <div className="text-red-400 text-2xl font-bold">
-                {incorrectResults}
-              </div>
-              <div className="text-sm text-gray-400">
-                Incorrect
-              </div>
-            </div>
-
-            <div>
-              <div className="text-blue-400 text-2xl font-bold">
-                {accuracy}%
-              </div>
-              <div className="text-sm text-gray-400">
-                Accuracy
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h2 className="text-xl font-bold mb-3">
-          Team Prediction Accuracy
-        </h2>
-
-        <div className="space-y-2">
-          {teamStats.slice(0, 15).map((team) => (
-            <div
-              key={team.team}
-              className="flex justify-between border-b border-slate-800 pb-1"
-            >
-              <div>
-                <div>{team.team}</div>
-
-                <div className="text-xs text-gray-500">
-                  {team.correct}/{team.total}
-                </div>
-              </div>
-
-              <div
-                className={
-                  team.accuracy >= 70
-                    ? "text-green-400"
-                    : team.accuracy >= 40
-                    ? "text-yellow-400"
-                    : "text-red-400"
-                }
-              >
-                {team.accuracy.toFixed(0)}%
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <p className="text-sm text-gray-400 mb-4">
-          Match data is updated periodically and may not reflect live scores.
+        <p className="text-slate-400 mt-2">
+          AI-powered match predictions, tournament statistics and live results.
         </p>
+      </div>
 
-        <button
-          onClick={refreshMatches}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Refresh Match Data
-        </button>
-
-        <input
-          type="text"
-          placeholder="Search teams..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full mb-6 p-3 rounded-lg bg-slate-800 border border-slate-700 text-white"
+        
+        <DashboardStats
+          exactScores={exactScores}
+          correctResults={correctResults}
+          incorrectResults={incorrectResults}
+          accuracy={accuracy}
         />
 
-        <select
-          value={selectedGroup}
-          onChange={(e) => setSelectedGroup(e.target.value)}
-          className="w-full mb-6 p-3 rounded-lg bg-slate-800 border border-slate-700 text-white"
-        >
-          <option value="ALL">All Groups</option>
+        <TeamAccuracy teamStats={teamStats} />
+        
 
-          {groups.map((group) => (
-            <option key={group} value={group}>
-              {group.replace("GROUP_", "Group ")}
-            </option>
-          ))}
-        </select>
+        <Filters
+          search={search}
+          setSearch={setSearch}
+          selectedGroup={selectedGroup}
+          setSelectedGroup={setSelectedGroup}
+          groups={groups}
+          onRefresh={refreshMatches}
+        />
 
         {loading && (
-          <p className="text-gray-400">Loading matches...</p>
-        )}
-
-        {error && (
-          <div className="bg-red-900 text-white p-3 rounded mb-4">
-            {error}
+          <div className="flex justify-center py-12">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500" />
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredMatches.map((match) => {
-            const prediction = predictionMap.get(match.id);
-            const actualHome = match.score.fullTime.home;
-            const actualAway = match.score.fullTime.away;
+        {/* Retry button */}
+        {error && (
+          <div className="bg-red-900/40 border border-red-700 text-white p-4 rounded-lg mb-4">
+            <p className="mb-3">
+              {error}
+            </p>
 
-            const predictionResult =
-              prediction &&
-              match.status === "FINISHED" &&
-              actualHome !== null &&
-              actualAway !== null
-                ? getPredictionResult(
-                    prediction.predictedHomeScore,
-                    prediction.predictedAwayScore,
-                    actualHome,
-                    actualAway
-                  )
-                : null;
-            return (
-            <div
-              key={match.id}
-              className={`rounded-xl p-5 shadow-lg flex flex-col gap-4 ${
-                match.status === "IN_PLAY"
-                  ? "bg-slate-900 border border-green-500"
-                  : "bg-slate-900 border border-slate-800"
-              }`}
+            <button
+              onClick={fetchMatches}
+              className="px-3 py-2 rounded bg-red-700 hover:bg-red-600"
             >
-              {/* Header */}
-              <div className="flex justify-between text-sm text-gray-400">
-                <span>{formatDate(match.utcDate)}</span>
-                <span className="font-medium text-gray-300">
-                  {match.group?.replace("GROUP_", "Group ")}
-                </span>
-              </div>
+              Retry
+            </button>
+          </div>
+        )}
 
-              {/* Home */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={match.homeTeam.crest}
-                    alt={match.homeTeam.name}
-                    className="w-8 h-8"
-                  />
-                  <span className="font-semibold">
-                    {match.homeTeam.name}
-                  </span>
-                </div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">
+            Matches
+          </h2>
 
-                {match.score.fullTime.home !== null && (
-                <span className="text-2xl font-bold">
-                  {match.score.fullTime.home}
-                </span>
-              )}
-              </div>
+          <span className="text-slate-400">
+            {filteredMatches.length} matches
+          </span>
+        </div>
 
-              {/* VS / Score center */}
-              <div className="text-center text-gray-400 text-sm">
-                <div className="text-center">
-                  {match.status === "TIMED" ? (
-                    <div>
-                      <div className="text-xs text-gray-500">
-                        KICK OFF
-                      </div>
-
-                      <div className="text-lg font-bold text-blue-400">
-                        {new Date(match.utcDate).toLocaleTimeString("en-GB", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-sm text-gray-400">
-                      {match.status === "IN_PLAY"
-                        ? "IN PROGRESS"
-                        : match.status === "FINISHED"
-                        ? "FULL TIME"
-                        : null}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={match.awayTeam.crest}
-                    alt={match.awayTeam.name}
-                    className="w-8 h-8"
-                  />
-                  <span className="font-semibold">
-                    {match.awayTeam.name}
-                  </span>
-                </div>
-
-                  {match.score.fullTime.away !== null && (
-                    <span className="text-2xl font-bold">
-                      {match.score.fullTime.away}
-                    </span>
-                  )}
-              </div>
-
-              {/* Status */}
-              <div className="flex justify-end items-center gap-2">
-                {match.status === "IN_PLAY" && (
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                  </span>
-                )}
-
-                <span
-                  className={`text-xs px-2 py-1 rounded font-bold ${getStatusColor(
-                    match.status
-                  )}`}
-                >
-                  {getStatusText(match.status)}
-                </span>
-              </div>
-              {/* Prediction */}
-              {prediction && (
-                <div className="mt-3 rounded-lg bg-slate-800 p-3 text-sm border border-slate-700">
-                  <div className="font-medium">
-                    Prediction:
-                    {" "}
-                    {match.homeTeam.name}
-                    {" "}
-                    {prediction.predictedHomeScore}
-                    -
-                    {prediction.predictedAwayScore}
-                    {" "}
-                    {match.awayTeam.name}
-                  </div>
-
-                  <div>
-                    Home Win:
-                    {" "}
-                    {(prediction.homeWinProbability * 100).toFixed(0)}%
-                  </div>
-                  {predictionResult && (
-                    <div className={`mt-2 font-semibold ${predictionResult.colour}`}>
-                      {predictionResult.label}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredMatches.map((match) => (
+            <MatchCard
+              key={match.id}
+              match={match}
+              prediction={predictionMap.get(match.id)}
+            />
+          ))}
         </div>
 
         {!loading && matches.length === 0 && (

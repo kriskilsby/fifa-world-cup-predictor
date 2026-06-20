@@ -1,3 +1,4 @@
+# .gitignore
 # Python
 python/venv/
 __pycache__/
@@ -28,3 +29,7 @@ build/
 # IDE
 .vscode/
 .idea/
+
+# Temporary backups
+backend_old/
+frontend/app/backup_page.tsx
