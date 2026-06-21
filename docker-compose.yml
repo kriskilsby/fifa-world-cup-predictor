@@ -1,4 +1,28 @@
+# docker-compose.yml
 services:
+
+  fifa_backend:
+    build:
+      context: ./backend
+    container_name: fifa_backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env.production
+    ports:
+      - "3003:3000"
+
+  fifa_frontend:
+    build:
+      context: ./frontend
+    container_name: fifa_frontend
+    restart: unless-stopped
+    env_file:
+      - ./frontend/.env.production
+    depends_on:
+      - fifa_backend
+    ports:
+      - "3004:3000"
+
   postgres:
     image: postgres:17
     container_name: fifa-postgres
