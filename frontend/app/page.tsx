@@ -20,13 +20,14 @@ export default function HomePage() {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  console.log("NEXT_PUBLIC_API_URL =", process.env.NEXT_PUBLIC_API_URL);
+  console.log("API_URL =", API_URL);
 
   async function fetchMatches() {
     try {
       setLoading(true);
       setError(null);
 
-      // const res = await fetch("http://localhost:3000/matches");
       const res = await fetch(`${API_URL}/matches`);
 
       if (!res.ok) {

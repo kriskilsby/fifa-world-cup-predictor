@@ -25,6 +25,34 @@ export class FootballDataService {
     private readonly competitionRepository: Repository<Competition>,
   ) {}
 
+  private async getOrCreateTeam(apiTeam: any, competition: Competition) {
+    let team = await this.teamRepository.findOne({
+      where: { apiId: apiTeam.id },
+    });
+
+    if (!team) {
+      team = this.teamRepository.create({
+        apiId: apiTeam.id,
+        name: apiTeam.name,
+        shortName: apiTeam.shortName,
+        tla: apiTeam.tla,
+        fifaCode: apiTeam.fifaCode,
+        crest: apiTeam.crest,
+        competition,
+      });
+    } else {
+      team.name = apiTeam.name;
+      team.shortName = apiTeam.shortName;
+      team.tla = apiTeam.tla;
+      team.fifaCode = apiTeam.fifaCode;
+      team.crest = apiTeam.crest;
+      team.competition = competition;
+    }
+
+    return this.teamRepository.save(team);
+  }
+
+  // API from https://www.football-data.org/
   async getCompetitions() {
     const response = await this.httpService.axiosRef.get(
       'https://api.football-data.org/v4/competitions',
@@ -38,6 +66,7 @@ export class FootballDataService {
     return response.data;
   }
 
+  // API from https://www.football-data.org/
   async importCompetitions() {
     const response = await this.httpService.axiosRef.get(
       'https://api.football-data.org/v4/competitions',
@@ -53,6 +82,7 @@ export class FootballDataService {
     );
   }
 
+  // API from https://www.football-data.org/
   async getWorldCupMatches() {
     const response = await this.httpService.axiosRef.get(
       'https://api.football-data.org/v4/competitions/WC/matches',
@@ -66,6 +96,7 @@ export class FootballDataService {
     return response.data;
   }
 
+  // API from https://www.football-data.org/
   async getWorldCupTeams() {
     const response = await this.httpService.axiosRef.get(
       'https://api.football-data.org/v4/competitions/WC/teams',
@@ -157,18 +188,21 @@ export class FootballDataService {
         continue;
       }
 
-      const homeTeam = await this.teamRepository.findOne({
-        where: { apiId: match.homeTeam.id },
-      });
+      // const homeTeam = await this.teamRepository.findOne({
+      //   where: { apiId: match.homeTeam.id },
+      // });
 
-      const awayTeam = await this.teamRepository.findOne({
-        where: { apiId: match.awayTeam.id },
-      });
+      // const awayTeam = await this.teamRepository.findOne({
+      //   where: { apiId: match.awayTeam.id },
+      // });
 
-      if (!homeTeam || !awayTeam) {
-        console.log(`Skipping match ${match.id} - teams not found in DB`);
-        continue;
-      }
+      // if (!homeTeam || !awayTeam) {
+      //   console.log(`Skipping match ${match.id} - teams not found in DB`);
+      //   continue;
+      // }
+
+      const homeTeam = await this.getOrCreateTeam(match.homeTeam, competition);
+      const awayTeam = await this.getOrCreateTeam(match.awayTeam, competition);
 
       const newMatch = this.matchRepository.create({
         apiId: match.id,

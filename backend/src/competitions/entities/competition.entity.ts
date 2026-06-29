@@ -9,7 +9,7 @@ export class Competition {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // ID from football-data.org API
+  // ID from https://www.football-data.org/ API
   @Column({ unique: true })
   apiId: number;
 
