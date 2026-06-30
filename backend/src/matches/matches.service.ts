@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from './entities/match.entity';
 import { FootballDataService } from '../football-data/football-data.service';
+import { PredictionsService } from '../predictions/predictions.service';
 
 @Injectable()
 export class MatchesService {
@@ -11,6 +12,7 @@ export class MatchesService {
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
     private readonly footballDataService: FootballDataService,
+    private readonly predictionsService: PredictionsService,
   ) {}
 
   findAll() {
@@ -44,10 +46,17 @@ export class MatchesService {
 
     const matches = await this.footballDataService.getWorldCupMatches();
 
-    await this.footballDataService.importWorldCupMatches(matches.matches);
+    const importResult = await this.footballDataService.importWorldCupMatches(
+      matches.matches,
+    );
+
+    const predictionResult =
+      await this.predictionsService.createMissingModelPredictions();
 
     return {
       success: true,
+      matches: importResult,
+      predictions: predictionResult,
     };
   }
 }

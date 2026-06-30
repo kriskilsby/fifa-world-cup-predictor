@@ -7,9 +7,14 @@ import { MatchesController } from './matches.controller';
 import { Match } from './entities/match.entity';
 
 import { FootballDataModule } from '../football-data/football-data.module';
+import { PredictionsModule } from '../predictions/predictions.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Match]), FootballDataModule],
+  imports: [
+    TypeOrmModule.forFeature([Match]),
+    FootballDataModule,
+    PredictionsModule,
+  ],
   controllers: [MatchesController],
   providers: [MatchesService],
 })
