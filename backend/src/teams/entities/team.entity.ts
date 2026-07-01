@@ -6,29 +6,29 @@ import { Competition } from '../../competitions/entities/competition.entity';
 @Entity()
 export class Team {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  apiId: number;
+  apiId!: number;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
-  shortName: string;
+  shortName?: string;
 
   @Column({ nullable: true })
-  tla: string;
+  tla?: string;
 
   @Column({ nullable: true })
-  fifaCode: string;
+  fifaCode?: string;
 
   @Column({ nullable: true })
-  crest: string;
+  crest?: string;
 
   @Column({ nullable: true })
-  groupName: string;
+  groupName?: string;
 
   @ManyToOne(() => Competition, (competition) => competition.teams)
-  competition: Competition;
+  competition!: Competition;
 }

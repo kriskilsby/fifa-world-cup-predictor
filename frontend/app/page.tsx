@@ -1,7 +1,7 @@
 // frontend/app/page.tsx
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 
 import DashboardStats from "./components/DashboardStats";
 import Filters from "./components/Filters";
@@ -23,7 +23,7 @@ export default function HomePage() {
   console.log("NEXT_PUBLIC_API_URL =", process.env.NEXT_PUBLIC_API_URL);
   console.log("API_URL =", API_URL);
 
-  async function fetchMatches() {
+  const fetchMatches = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -36,18 +36,18 @@ export default function HomePage() {
 
       const data = await res.json();
       setMatches(data);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Something went wrong";
+      setError(message);
     } finally {
       setLoading(false);
     }
-  }
+  }, [API_URL]);
 
-  async function fetchPredictions() {
+  const fetchPredictions = useCallback(async () => {
     try {
-      const res = await fetch(
-    `${API_URL}/predictions/model`
-      );
+      const res = await fetch(`${API_URL}/predictions/model`);
 
       if (!res.ok) {
         throw new Error("Failed to fetch predictions");
@@ -56,15 +56,19 @@ export default function HomePage() {
       const data = await res.json();
 
       setPredictions(data);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
     }
-  }
+  }, [API_URL]);
 
   useEffect(() => {
-    fetchMatches();
-    fetchPredictions();
-  }, []);
+    const timer = window.setTimeout(() => {
+      void fetchMatches();
+      void fetchPredictions();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [fetchMatches, fetchPredictions]);
 
   async function refreshMatches() {
     try {
@@ -129,17 +133,6 @@ export default function HomePage() {
   const groups = Array.from(
     new Set(matches.map((m) => m.group))
   ).filter(Boolean);
-
-  // const filteredMatches = matches.filter((match) => {
-  //   const matchesSearch =
-  //     match.homeTeam.name.toLowerCase().includes(search.toLowerCase()) ||
-  //     match.awayTeam.name.toLowerCase().includes(search.toLowerCase());
-
-  //   const matchesGroup =
-  //     selectedGroup === "ALL" || match.group === selectedGroup;
-
-  //   return matchesSearch && matchesGroup;
-  // });
 
   const filteredMatches = useMemo(() => {
     return matches.filter((match) => {

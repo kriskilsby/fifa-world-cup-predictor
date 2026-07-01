@@ -4,11 +4,11 @@ import { Entity, PrimaryColumn, Column, UpdateDateColumn } from 'typeorm';
 @Entity()
 export class TeamRating {
   @PrimaryColumn()
-  teamId: number;
+  teamId!: number;
 
   @Column({ type: 'int', default: 1500 })
-  elo: number;
+  elo!: number;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

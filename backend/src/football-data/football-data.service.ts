@@ -9,6 +9,62 @@ import { Competition } from 'src/competitions/entities/competition.entity';
 import { Team } from 'src/teams/entities/team.entity';
 import { Match } from 'src/matches/entities/match.entity';
 
+type FootballDataTeam = {
+  id: number;
+  name: string;
+  shortName?: string;
+  tla?: string;
+  fifaCode?: string;
+  crest?: string | null;
+};
+
+type FootballDataCompetition = {
+  id: number;
+  name: string;
+  code: string;
+  type: string;
+  emblem?: string | null;
+  area?: {
+    name?: string | null;
+  };
+};
+
+type FootballDataMatchScore = {
+  fullTime?: {
+    home: number | null;
+    away: number | null;
+  } | null;
+  halfTime?: {
+    home: number | null;
+    away: number | null;
+  } | null;
+  winner?: string | null;
+};
+
+type FootballDataMatch = {
+  id: number;
+  utcDate: string;
+  status: string;
+  stage: string;
+  group?: string | null;
+  matchday?: number | null;
+  score?: FootballDataMatchScore | null;
+  homeTeam?: FootballDataTeam | null;
+  awayTeam?: FootballDataTeam | null;
+};
+
+type FootballDataCompetitionsResponse = {
+  competitions: FootballDataCompetition[];
+};
+
+type FootballDataTeamsResponse = {
+  teams: FootballDataTeam[];
+};
+
+type FootballDataMatchesResponse = {
+  matches: FootballDataMatch[];
+};
+
 @Injectable()
 export class FootballDataService {
   constructor(
@@ -25,27 +81,37 @@ export class FootballDataService {
     private readonly competitionRepository: Repository<Competition>,
   ) {}
 
-  private async getOrCreateTeam(apiTeam: any, competition: Competition) {
+  private async getOrCreateTeam(
+    apiTeam: FootballDataTeam,
+    competition: Competition,
+  ) {
     let team = await this.teamRepository.findOne({
       where: { apiId: apiTeam.id },
     });
 
+    const shortName = apiTeam.shortName ?? '';
+    const tla = apiTeam.tla ?? '';
+    const fifaCode = apiTeam.fifaCode ?? '';
+    const crest = apiTeam.crest ?? '';
+
     if (!team) {
-      team = this.teamRepository.create({
+      const teamData: Partial<Team> = {
         apiId: apiTeam.id,
         name: apiTeam.name,
-        shortName: apiTeam.shortName,
-        tla: apiTeam.tla,
-        fifaCode: apiTeam.fifaCode,
-        crest: apiTeam.crest,
+        shortName,
+        tla,
+        fifaCode,
+        crest,
         competition,
-      });
+      };
+
+      team = this.teamRepository.create(teamData);
     } else {
       team.name = apiTeam.name;
-      team.shortName = apiTeam.shortName;
-      team.tla = apiTeam.tla;
-      team.fifaCode = apiTeam.fifaCode;
-      team.crest = apiTeam.crest;
+      team.shortName = shortName;
+      team.tla = tla;
+      team.fifaCode = fifaCode;
+      team.crest = crest;
       team.competition = competition;
     }
 
@@ -53,64 +119,66 @@ export class FootballDataService {
   }
 
   // API from https://www.football-data.org/
-  async getCompetitions() {
-    const response = await this.httpService.axiosRef.get(
-      'https://api.football-data.org/v4/competitions',
-      {
-        headers: {
-          'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+  async getCompetitions(): Promise<FootballDataCompetitionsResponse> {
+    const response =
+      await this.httpService.axiosRef.get<FootballDataCompetitionsResponse>(
+        'https://api.football-data.org/v4/competitions',
+        {
+          headers: {
+            'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+          },
         },
-      },
-    );
+      );
 
     return response.data;
   }
 
   // API from https://www.football-data.org/
   async importCompetitions() {
-    const response = await this.httpService.axiosRef.get(
-      'https://api.football-data.org/v4/competitions',
-      {
-        headers: {
-          'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+    const response =
+      await this.httpService.axiosRef.get<FootballDataCompetitionsResponse>(
+        'https://api.football-data.org/v4/competitions',
+        {
+          headers: {
+            'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+          },
         },
-      },
-    );
+      );
 
-    return this.competitionsService.importFromApi(
-      response.data.competitions,
-    );
+    return this.competitionsService.importFromApi(response.data.competitions);
   }
 
   // API from https://www.football-data.org/
-  async getWorldCupMatches() {
-    const response = await this.httpService.axiosRef.get(
-      'https://api.football-data.org/v4/competitions/WC/matches',
-      {
-        headers: {
-          'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+  async getWorldCupMatches(): Promise<FootballDataMatchesResponse> {
+    const response =
+      await this.httpService.axiosRef.get<FootballDataMatchesResponse>(
+        'https://api.football-data.org/v4/competitions/WC/matches',
+        {
+          headers: {
+            'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+          },
         },
-      },
-    );
+      );
 
     return response.data;
   }
 
   // API from https://www.football-data.org/
-  async getWorldCupTeams() {
-    const response = await this.httpService.axiosRef.get(
-      'https://api.football-data.org/v4/competitions/WC/teams',
-      {
-        headers: {
-          'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+  async getWorldCupTeams(): Promise<FootballDataTeamsResponse> {
+    const response =
+      await this.httpService.axiosRef.get<FootballDataTeamsResponse>(
+        'https://api.football-data.org/v4/competitions/WC/teams',
+        {
+          headers: {
+            'X-Auth-Token': process.env.FOOTBALL_DATA_API_KEY,
+          },
         },
-      },
-    );
+      );
 
     return response.data;
   }
 
-  async importWorldCupTeams(teams: any[]) {
+  async importWorldCupTeams(teams: FootballDataTeam[]) {
     const competition = await this.competitionRepository.findOne({
       where: { code: 'WC' },
     });
@@ -124,28 +192,34 @@ export class FootballDataService {
         where: { apiId: team.id },
       });
 
+      const shortName = team.shortName ?? '';
+      const tla = team.tla ?? '';
+      const fifaCode = team.fifaCode ?? '';
+      const crest = team.crest ?? '';
+
       if (existing) {
         existing.name = team.name;
-        existing.shortName = team.shortName;
-        existing.tla = team.tla;
-        existing.fifaCode = team.fifaCode;
-        existing.crest = team.crest;
+        existing.shortName = shortName;
+        existing.tla = tla;
+        existing.fifaCode = fifaCode;
+        existing.crest = crest;
         existing.competition = competition;
 
         await this.teamRepository.save(existing);
         continue;
       }
 
-      const newTeam = this.teamRepository.create({
+      const newTeamData: Partial<Team> = {
         apiId: team.id,
         name: team.name,
-        shortName: team.shortName,
-        tla: team.tla,
-        fifaCode: team.fifaCode,
-        crest: team.crest,
+        shortName,
+        tla,
+        fifaCode,
+        crest,
+        competition,
+      };
 
-        competition: competition,
-      });
+      const newTeam = this.teamRepository.create(newTeamData);
 
       await this.teamRepository.save(newTeam);
     }
@@ -155,9 +229,9 @@ export class FootballDataService {
     };
   }
 
-  async importWorldCupMatches(matches: any[]) {
+  async importWorldCupMatches(matches: FootballDataMatch[]) {
     const competition = await this.competitionRepository.findOne({
-        where: { code: 'WC' },
+      where: { code: 'WC' },
     });
 
     if (!competition) {
@@ -165,8 +239,10 @@ export class FootballDataService {
     }
 
     for (const match of matches) {
-      // 🧠 SAFETY CHECK FIRST
-      if (!match.homeTeam?.id || !match.awayTeam?.id) {
+      const homeTeamData = match.homeTeam;
+      const awayTeamData = match.awayTeam;
+
+      if (!homeTeamData?.id || !awayTeamData?.id) {
         console.log(`Skipping match ${match.id} - missing team data`);
         continue;
       }
@@ -176,11 +252,11 @@ export class FootballDataService {
       });
 
       if (existing) {
-        existing.utcDate = match.utcDate;
+        existing.utcDate = new Date(match.utcDate);
         existing.status = match.status;
         existing.stage = match.stage;
-        existing.group = match.group;
-        existing.matchday = match.matchday;
+        existing.group = match.group ?? '';
+        existing.matchday = match.matchday ?? 0;
 
         existing.score = match.score;
 
@@ -188,36 +264,23 @@ export class FootballDataService {
         continue;
       }
 
-      // const homeTeam = await this.teamRepository.findOne({
-      //   where: { apiId: match.homeTeam.id },
-      // });
+      const homeTeam = await this.getOrCreateTeam(homeTeamData, competition);
+      const awayTeam = await this.getOrCreateTeam(awayTeamData, competition);
 
-      // const awayTeam = await this.teamRepository.findOne({
-      //   where: { apiId: match.awayTeam.id },
-      // });
-
-      // if (!homeTeam || !awayTeam) {
-      //   console.log(`Skipping match ${match.id} - teams not found in DB`);
-      //   continue;
-      // }
-
-      const homeTeam = await this.getOrCreateTeam(match.homeTeam, competition);
-      const awayTeam = await this.getOrCreateTeam(match.awayTeam, competition);
-
-      const newMatch = this.matchRepository.create({
+      const newMatchData: Partial<Match> = {
         apiId: match.id,
-        utcDate: match.utcDate,
+        utcDate: new Date(match.utcDate),
         status: match.status,
         stage: match.stage,
-        group: match.group,
-        matchday: match.matchday,
-
+        group: match.group ?? '',
+        matchday: match.matchday ?? 0,
         score: match.score,
-
         competition,
         homeTeam,
         awayTeam,
-      });
+      };
+
+      const newMatch = this.matchRepository.create(newMatchData);
 
       await this.matchRepository.save(newMatch);
     }

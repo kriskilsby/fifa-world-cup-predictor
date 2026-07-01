@@ -7,6 +7,17 @@ import { Competition } from './entities/competition.entity';
 import { CreateCompetitionDto } from './dto/create-competition.dto';
 import { UpdateCompetitionDto } from './dto/update-competition.dto';
 
+type CompetitionApiItem = {
+  id: number;
+  name: string;
+  code: string;
+  type: string;
+  emblem?: string | null;
+  area?: {
+    name?: string | null;
+  };
+};
+
 @Injectable()
 export class CompetitionsService {
   constructor(
@@ -54,32 +65,37 @@ export class CompetitionsService {
   // IMPORT LOGIC (THIS is what you were adding)
   // -----------------------------------
 
-  async importFromApi(competitions: any[]) {
+  async importFromApi(competitions: CompetitionApiItem[]) {
     for (const comp of competitions) {
       const existing = await this.competitionRepository.findOne({
         where: { apiId: comp.id },
       });
 
       // if (existing) continue;
+      const emblem = comp.emblem ?? '';
+      const areaName = comp.area?.name ?? '';
+
       if (existing) {
         existing.name = comp.name;
         existing.code = comp.code;
         existing.type = comp.type;
-        existing.emblem = comp.emblem;
-        existing.areaName = comp.area?.name;
+        existing.emblem = emblem;
+        existing.areaName = areaName;
 
         await this.competitionRepository.save(existing);
         continue;
       }
 
-      const competition = this.competitionRepository.create({
+      const competitionData: Partial<Competition> = {
         apiId: comp.id,
         name: comp.name,
         code: comp.code,
         type: comp.type,
-        emblem: comp.emblem,
-        areaName: comp.area?.name,
-      });
+        emblem,
+        areaName,
+      };
+
+      const competition = this.competitionRepository.create(competitionData);
 
       await this.competitionRepository.save(competition);
     }

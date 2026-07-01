@@ -88,14 +88,8 @@ export class PredictionsService {
         continue;
       }
 
-      const homeWinProbability = this.expected(
-        homeRating.elo,
-        awayRating.elo,
-      );
-      const awayWinProbability = this.expected(
-        awayRating.elo,
-        homeRating.elo,
-      );
+      const homeWinProbability = this.expected(homeRating.elo, awayRating.elo);
+      const awayWinProbability = this.expected(awayRating.elo, homeRating.elo);
       const score = this.predictScore(homeWinProbability);
 
       const prediction = this.predictionRepository.create({

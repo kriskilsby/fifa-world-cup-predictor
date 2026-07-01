@@ -7,37 +7,37 @@ import { Match } from '../../matches/entities/match.entity';
 @Entity()
 export class Prediction {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @ManyToOne(() => User, {
     nullable: true,
   })
-  user: User;
+  user?: User;
 
   @ManyToOne(() => Match)
-  match: Match;
+  match!: Match;
 
   @Column()
-  predictedHomeScore: number;
+  predictedHomeScore!: number;
 
   @Column()
-  predictedAwayScore: number;
+  predictedAwayScore!: number;
 
   @Column({
     type: 'int',
     nullable: true,
   })
-  pointsAwarded: number | null;
+  pointsAwarded?: number | null;
 
   @Column({ type: 'float', nullable: true })
-  homeWinProbability: number;
+  homeWinProbability?: number;
 
   @Column({ type: 'float', nullable: true })
-  awayWinProbability: number;
+  awayWinProbability?: number;
 
   @Column({ type: 'varchar', nullable: true })
-  source: string; // 'model' or 'user'
+  source?: string; // 'model' or 'user'
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
+  createdAt!: Date;
 }

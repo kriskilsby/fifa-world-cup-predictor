@@ -7,36 +7,36 @@ import { Team } from '../../teams/entities/team.entity';
 @Entity()
 export class Match {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  apiId: number;
+  apiId!: number;
 
   @Column()
-  utcDate: Date;
+  utcDate!: Date;
 
   @Column()
-  status: string;
+  status!: string;
 
   @Column({ nullable: true })
-  stage: string;
+  stage?: string;
 
   @Column({ nullable: true })
-  matchday: number;
+  matchday?: number;
 
   @ManyToOne(() => Competition, (competition) => competition.matches)
-  competition: Competition;
+  competition!: Competition;
 
   @ManyToOne(() => Team, { nullable: true })
-  homeTeam: Team;
+  homeTeam?: Team;
 
   @ManyToOne(() => Team, { nullable: true })
-  awayTeam: Team;
+  awayTeam?: Team;
 
   // recommended flexible approach
   @Column({ type: 'json', nullable: true })
-  score: any;
+  score?: any;
 
   @Column({ nullable: true })
-  group: string;
+  group?: string;
 }

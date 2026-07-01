@@ -54,13 +54,9 @@ export class TeamRatingService {
     const expectedHome = this.expectedScore(home.elo, away.elo);
     const expectedAway = 1 - expectedHome;
 
-    home.elo = Math.round(
-      home.elo + this.K * (homeResult - expectedHome),
-    );
+    home.elo = Math.round(home.elo + this.K * (homeResult - expectedHome));
 
-    away.elo = Math.round(
-      away.elo + this.K * (awayResult - expectedAway),
-    );
+    away.elo = Math.round(away.elo + this.K * (awayResult - expectedAway));
 
     await this.ratingRepo.save([home, away]);
   }

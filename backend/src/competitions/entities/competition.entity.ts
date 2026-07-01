@@ -7,39 +7,39 @@ import { Match } from '../../matches/entities/match.entity';
 @Entity()
 export class Competition {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   // ID from https://www.football-data.org/ API
   @Column({ unique: true })
-  apiId: number;
+  apiId!: number;
 
   // e.g. "PL", "WC", "CL"
   @Column({ unique: true, nullable: true })
-  code: string;
+  code?: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
-  type: string;
+  type?: string;
 
   @Column({ nullable: true })
-  emblem: string;
+  emblem?: string;
 
   @Column({ nullable: true })
-  areaName: string;
+  areaName?: string;
 
   @Column({ nullable: true })
-  currentSeasonStart: string;
+  currentSeasonStart?: string;
 
   @Column({ nullable: true })
-  currentSeasonEnd: string;
+  currentSeasonEnd?: string;
 
   // RELATIONS (logical only, no DB columns created here)
 
   @OneToMany(() => Team, (team) => team.competition)
-  teams: Team[];
+  teams!: Team[];
 
   @OneToMany(() => Match, (match) => match.competition)
-  matches: Match[];
+  matches!: Match[];
 }
