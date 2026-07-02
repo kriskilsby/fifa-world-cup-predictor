@@ -17,5 +17,6 @@ import { PredictionsModule } from '../predictions/predictions.module';
   ],
   controllers: [MatchesController],
   providers: [MatchesService],
+  exports: [MatchesService],
 })
 export class MatchesModule {}

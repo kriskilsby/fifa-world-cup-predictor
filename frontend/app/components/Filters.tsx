@@ -8,7 +8,7 @@ type FiltersProps = {
 
   groups: string[];
 
-  onRefresh: () => void;
+  // onRefresh: () => void;
 };
 
 export default function Filters({
@@ -17,11 +17,11 @@ export default function Filters({
   selectedGroup,
   setSelectedGroup,
   groups,
-  onRefresh,
+  // onRefresh,
 }: FiltersProps) {
   return (
     <div className="mb-8 rounded-xl bg-slate-900 border border-slate-800 p-6">
-      <div className="flex justify-between items-center mb-4">
+      {/* <div className="flex justify-between items-center mb-4">
         <h2 className="font-bold text-lg">
           Filters
         </h2>
@@ -32,7 +32,11 @@ export default function Filters({
         >
           Refresh Data
         </button>
-      </div>
+      </div> */}
+
+      <h2 className="font-bold text-lg mb-4">
+        Filters
+      </h2>
 
       <div className="grid md:grid-cols-2 gap-4">
         <input

@@ -12,29 +12,53 @@ export default function MatchCard({
   prediction,
 }: MatchCardProps) {
 
+  function getLiveStatus(match: Match) {
+    const now = new Date();
+    const kickoff = new Date(match.utcDate);
+
+    if (match.status === "FINISHED") return "FT";
+    if (now < kickoff) return "UPCOMING";
+    return "LIVE";
+  }
+
+  const status = getLiveStatus(match);
+
+  // function getStatusColor(status: string) {
+  //   switch (status) {
+  //     case "FINISHED":
+  //       return "bg-slate-600";
+  //     case "IN_PLAY":
+  //       return "bg-green-600";
+  //     default:
+  //       return "bg-blue-600";
+  //   }
+  // }
+
   function getStatusColor(status: string) {
     switch (status) {
-      case "FINISHED":
+      case "FT":
         return "bg-slate-600";
-      case "IN_PLAY":
+      case "LIVE":
         return "bg-green-600";
+      case "UPCOMING":
+        return "bg-blue-600";
       default:
         return "bg-blue-600";
     }
   }
 
-  function getStatusText(status: string) {
-    switch (status) {
-      case "IN_PLAY":
-        return "LIVE";
-      case "FINISHED":
-        return "FT";
-      case "TIMED":
-        return "UPCOMING";
-      default:
-        return status;
-    }
-  }
+  // function getStatusText(status: string) {
+  //   switch (status) {
+  //     case "IN_PLAY":
+  //       return "LIVE";
+  //     case "FINISHED":
+  //       return "FT";
+  //     case "TIMED":
+  //       return "UPCOMING";
+  //     default:
+  //       return status;
+  //   }
+  // }
 
   function getPredictionResult(
     predictionHome: number,
@@ -84,7 +108,7 @@ export default function MatchCard({
 
   const predictionResult =
     prediction &&
-    match.status === "FINISHED" &&
+    status === "FT" &&
     actualHome !== null &&
     actualAway !== null
       ? getPredictionResult(
@@ -98,7 +122,7 @@ export default function MatchCard({
   return (
     <div
       className={`rounded-xl p-5 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl transition-all duration-200 hover:border-blue-500 hover:shadow-xl flex flex-col gap-4 ${
-        match.status === "IN_PLAY"
+        status === "LIVE"
           ? "bg-slate-900 border border-green-500"
           : "bg-slate-900 border border-slate-800"
       }`}
@@ -138,7 +162,7 @@ export default function MatchCard({
       </div>
 
       <div className="text-center text-gray-400 text-sm">
-        {match.status === "TIMED" ? (
+        {status === "UPCOMING" ? (
           <>
             <div className="text-sm text-gray-500">
               KICK OFF
@@ -156,7 +180,7 @@ export default function MatchCard({
           </>
         ) : (
           <div>
-            {match.status === "IN_PLAY"
+            {status === "LIVE"
               ? "IN PROGRESS"
               : "FULL TIME"}
           </div>
@@ -183,7 +207,7 @@ export default function MatchCard({
       </div>
 
       <div className="flex justify-end items-center gap-2">
-        {match.status === "IN_PLAY" && (
+        {status === "LIVE" && (
           <span className="relative flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
@@ -192,10 +216,10 @@ export default function MatchCard({
 
         <span
           className={`text-xs px-2 py-1 rounded font-bold ${getStatusColor(
-            match.status
+            status
           )}`}
         >
-          {getStatusText(match.status)}
+          {status}
         </span>
       </div>
 

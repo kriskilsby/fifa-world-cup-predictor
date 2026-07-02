@@ -243,7 +243,9 @@ export class FootballDataService {
       const awayTeamData = match.awayTeam;
 
       if (!homeTeamData?.id || !awayTeamData?.id) {
-        console.log(`Skipping match ${match.id} - missing team data`);
+        console.log(
+          `Skipping match ${match.id} because participating teams have not yet been confirmed`,
+        );
         continue;
       }
 

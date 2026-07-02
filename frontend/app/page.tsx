@@ -70,21 +70,21 @@ export default function HomePage() {
     return () => window.clearTimeout(timer);
   }, [fetchMatches, fetchPredictions]);
 
-  async function refreshMatches() {
-    try {
-      setLoading(true);
+  // async function refreshMatches() {
+  //   try {
+  //     setLoading(true);
 
-      await fetch(`${API_URL}/matches/refresh`, {
-        method: "POST",
-      });
+  //     await fetch(`${API_URL}/matches/refresh`, {
+  //       method: "POST",
+  //     });
 
-      await fetchMatches();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
+  //     await fetchMatches();
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   function getPredictionResult(
     predictionHome: number,
@@ -319,7 +319,7 @@ export default function HomePage() {
           selectedGroup={selectedGroup}
           setSelectedGroup={setSelectedGroup}
           groups={groups}
-          onRefresh={refreshMatches}
+          // onRefresh={refreshMatches}
         />
 
         {loading && (

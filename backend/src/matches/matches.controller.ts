@@ -17,8 +17,8 @@ export class MatchesController {
     return this.matchesService.findOne(+id);
   }
 
-  @Post('refresh')
-  async refreshMatches() {
-    return this.matchesService.refreshMatches();
-  }
+  // @Post('refresh')
+  // async refreshMatches() {
+  //   return this.matchesService.refreshMatches();
+  // }
 }

@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { TeamsModule } from './teams/teams.module';
 import { MatchesModule } from './matches/matches.module';
@@ -13,10 +14,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { FootballDataModule } from './football-data/football-data.module';
 import { TeamRatingModule } from './team-rating/team-rating.module';
+import { SchedulerModule } from './scheduler/scheduler.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
+    ScheduleModule.forRoot(),
 
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -27,7 +31,7 @@ import { TeamRatingModule } from './team-rating/team-rating.module';
       database: process.env.DB_NAME,
 
       autoLoadEntities: true,
-      synchronize: true, // dev only
+      synchronize: process.env.NODE_ENV !== 'production', // true = dev only - false = prod only - use migrations instead
     }),
 
     TeamsModule,
@@ -37,6 +41,7 @@ import { TeamRatingModule } from './team-rating/team-rating.module';
     UsersModule,
     FootballDataModule,
     TeamRatingModule,
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
