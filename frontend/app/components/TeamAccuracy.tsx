@@ -20,7 +20,7 @@ export default function TeamAccuracy({
       </h2>
 
       <div className="max-h-[220px] overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 text-center">
-        {teamStats.slice(0, 15).map((team) => (
+        {teamStats.map((team) => (
             <div
             key={team.team}
             className="rounded-lg bg-slate-800 border border-slate-700 p-3"
