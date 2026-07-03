@@ -14,39 +14,40 @@ export default function TeamAccuracy({
   teamStats,
 }: TeamAccuracyProps) {
   return (
-    <div className="mb-8 rounded-xl bg-slate-900 border border-slate-800 p-6">
-      <h2 className="text-xl font-bold mb-4">
-        Team Prediction Accuracy
-      </h2>
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-sm sm:p-6">
+      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-xl font-bold">Team Prediction Accuracy</h2>
+        <p className="text-sm text-slate-400">
+          Accuracy based on completed matches.
+        </p>
+      </div>
 
-      <div className="max-h-[220px] overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 text-center">
+      <div className="grid max-h-[260px] grid-cols-2 gap-3 overflow-y-auto text-center sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {teamStats.map((team) => (
-            <div
+          <div
             key={team.team}
-            className="rounded-lg bg-slate-800 border border-slate-700 p-3"
-            >
-            <div className="font-medium">
-                {team.team}
-            </div>
+            className="rounded-lg border border-slate-700 bg-slate-800 p-3"
+          >
+            <div className="truncate font-medium">{team.team}</div>
 
             <div
-                className={`text-xl font-bold ${
+              className={`text-xl font-bold ${
                 team.accuracy >= 70
-                    ? "text-green-400"
-                    : team.accuracy >= 40
-                    ? "text-yellow-400"
-                    : "text-red-400"
-                }`}
+                  ? "text-green-400"
+                  : team.accuracy >= 40
+                  ? "text-yellow-400"
+                  : "text-red-400"
+              }`}
             >
-                {team.accuracy.toFixed(0)}%
+              {team.accuracy.toFixed(0)}%
             </div>
 
-            <div className="text-xs text-gray-500">
-                {team.correct}/{team.total} correct
+            <div className="text-xs text-slate-500">
+              {team.correct}/{team.total} correct
             </div>
-            </div>
+          </div>
         ))}
-        </div>
+      </div>
     </div>
   );
 }

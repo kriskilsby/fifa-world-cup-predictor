@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState, useMemo } from "react";
 
 import DashboardStats from "./components/DashboardStats";
 import Filters from "./components/Filters";
+import Header from "./components/Header";
 import MatchCard from "./components/MatchCard";
 import { Match } from "./types/match";
 import { Prediction } from "./types/prediction";
@@ -18,6 +19,7 @@ export default function HomePage() {
   const [search, setSearch] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("ALL");
   const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [showQuickNav, setShowQuickNav] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -67,6 +69,17 @@ export default function HomePage() {
 
     return () => window.clearTimeout(timer);
   }, [fetchMatches, fetchPredictions]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowQuickNav(window.scrollY > 240);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   function getPredictionResult(
     predictionHome: number,
@@ -263,21 +276,35 @@ export default function HomePage() {
     }))
     .sort((a, b) => b.accuracy - a.accuracy);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
   // Frontend rendering
   return (
-    <main className="min-h-screen bg-slate-950 text-white p-6">
-      <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold">
-          FIFA World Cup Predictor
-        </h1>
+    <main className="min-h-screen bg-slate-950 text-white">
+      <Header showSearch search={search} setSearch={setSearch} />
 
-        <p className="text-slate-400 mt-2">
-          AI-powered match predictions, tournament statistics and live results.
-        </p>
-      </div>
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-sm sm:p-8">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-400">
+            Tournament dashboard
+          </p>
+          <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
+            FIFA World Cup Predictor
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
+            AI-powered match predictions, tournament statistics and live results.
+          </p>
+        </section>
 
-        
         <DashboardStats
           exactScores={exactScores}
           correctResults={correctResults}
@@ -286,7 +313,6 @@ export default function HomePage() {
         />
 
         <TeamAccuracy teamStats={teamStats} />
-        
 
         <Filters
           search={search}
@@ -302,47 +328,73 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Retry button */}
         {error && (
-          <div className="bg-red-900/40 border border-red-700 text-white p-4 rounded-lg mb-4">
-            <p className="mb-3">
-              {error}
-            </p>
+          <div className="mb-4 rounded-xl border border-red-700 bg-red-900/40 p-4 text-white">
+            <p className="mb-3">{error}</p>
 
             <button
               onClick={fetchMatches}
-              className="px-3 py-2 rounded bg-red-700 hover:bg-red-600"
+              className="rounded bg-red-700 px-3 py-2 transition hover:bg-red-600"
             >
               Retry
             </button>
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">
-            Matches
-          </h2>
+        <section
+          id="matches-section"
+          className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6"
+        >
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-xl font-bold">Matches</h2>
+              <p className="text-sm text-slate-400">
+                Browse live and completed fixtures with predictions.
+              </p>
+            </div>
 
-          <span className="text-slate-400">
-            {filteredMatches.length} matches
-          </span>
-        </div>
+            <span className="text-sm text-slate-400">
+              {filteredMatches.length} matches
+            </span>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredMatches.map((match) => (
-            <MatchCard
-              key={match.id}
-              match={match}
-              prediction={predictionMap.get(match.id)}
-            />
-          ))}
-        </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {filteredMatches.map((match) => (
+              <MatchCard
+                key={match.id}
+                match={match}
+                prediction={predictionMap.get(match.id)}
+              />
+            ))}
+          </div>
 
-        {!loading && matches.length === 0 && (
-          <p className="text-gray-400 mt-6">
-            No matches found.
-          </p>
-        )}
+          {!loading && matches.length === 0 && (
+            <div className="mt-6 rounded-xl border border-dashed border-slate-700 bg-slate-950/60 p-6 text-center text-slate-400">
+              No matches found for the current selection.
+            </div>
+          )}
+        </section>
+      </div>
+
+      <div className="fixed bottom-4 right-4 z-30 flex flex-col gap-2 sm:hidden">
+        <button
+          type="button"
+          onClick={scrollToTop}
+          className={`rounded-full border border-slate-700 bg-slate-900/95 px-3 py-2 text-sm font-medium text-slate-100 shadow-lg transition ${
+            showQuickNav ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        >
+          ↑ Top
+        </button>
+        <button
+          type="button"
+          onClick={scrollToBottom}
+          className={`rounded-full border border-slate-700 bg-slate-900/95 px-3 py-2 text-sm font-medium text-slate-100 shadow-lg transition ${
+            showQuickNav ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        >
+          ↓ Bottom
+        </button>
       </div>
     </main>
   );
