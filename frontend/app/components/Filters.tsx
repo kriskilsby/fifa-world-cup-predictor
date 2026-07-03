@@ -8,7 +8,6 @@ type FiltersProps = {
 
   groups: string[];
 
-  // onRefresh: () => void;
 };
 
 export default function Filters({
@@ -17,22 +16,9 @@ export default function Filters({
   selectedGroup,
   setSelectedGroup,
   groups,
-  // onRefresh,
 }: FiltersProps) {
   return (
     <div className="mb-8 rounded-xl bg-slate-900 border border-slate-800 p-6">
-      {/* <div className="flex justify-between items-center mb-4">
-        <h2 className="font-bold text-lg">
-          Filters
-        </h2>
-
-        <button
-          onClick={onRefresh}
-          className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
-        >
-          Refresh Data
-        </button>
-      </div> */}
 
       <h2 className="font-bold text-lg mb-4">
         Filters

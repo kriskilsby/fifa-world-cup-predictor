@@ -20,8 +20,6 @@ export default function HomePage() {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  console.log("NEXT_PUBLIC_API_URL =", process.env.NEXT_PUBLIC_API_URL);
-  console.log("API_URL =", API_URL);
 
   const fetchMatches = useCallback(async () => {
     try {
@@ -69,22 +67,6 @@ export default function HomePage() {
 
     return () => window.clearTimeout(timer);
   }, [fetchMatches, fetchPredictions]);
-
-  // async function refreshMatches() {
-  //   try {
-  //     setLoading(true);
-
-  //     await fetch(`${API_URL}/matches/refresh`, {
-  //       method: "POST",
-  //     });
-
-  //     await fetchMatches();
-  //   } catch (err) {
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
 
   function getPredictionResult(
     predictionHome: number,
@@ -151,13 +133,6 @@ export default function HomePage() {
       return matchesSearch && matchesGroup;
     });
   }, [matches, search, selectedGroup]);
-
-  // const predictionMap = new Map(
-  //   predictions.map((prediction) => [
-  //     prediction.match.id,
-  //     prediction,
-  //   ])
-  // );
 
   const predictionMap = useMemo(() => {
     return new Map(
@@ -319,7 +294,6 @@ export default function HomePage() {
           selectedGroup={selectedGroup}
           setSelectedGroup={setSelectedGroup}
           groups={groups}
-          // onRefresh={refreshMatches}
         />
 
         {loading && (

@@ -16,9 +16,4 @@ export class MatchesController {
   findOne(@Param('id') id: string) {
     return this.matchesService.findOne(+id);
   }
-
-  // @Post('refresh')
-  // async refreshMatches() {
-  //   return this.matchesService.refreshMatches();
-  // }
 }
