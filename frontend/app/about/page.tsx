@@ -1,5 +1,7 @@
 // frontend/app/about/page.tsx
 import Header from "../components/Header";
+import { Card } from "../components/ui/Card";
+import SectionTitle from "../components/ui/SectionTitle";
 
 export default function AboutPage() {
   return (
@@ -8,12 +10,12 @@ export default function AboutPage() {
 
       <div className="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8">
         {/* Header section */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8">
+        <Card className="rounded-2xl p-6 sm:p-8">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-400">
             About
           </p>
 
-          <h1 className="text-3xl font-bold sm:text-4xl text-red-600">
+          <h1 className="text-3xl font-bold sm:text-4xl">
             FIFA World Cup Predictor
           </h1>
 
@@ -21,16 +23,15 @@ export default function AboutPage() {
             This application is a full-stack World Cup prediction system that combines historical football data,
             Elo-based statistical modelling, and live match updates to generate tournament predictions and insights.
           </p>
-        </div>
+        </Card>
 
         {/* Data sources + ingestion */}
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-            <h2 className="text-xl font-semibold">Data Sources</h2>
-
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              The system aggregates football data from multiple sources to build a reliable dataset for predictions:
-            </p>
+          <Card className="rounded-2xl p-6">
+            <SectionTitle
+              title="Data Sources"
+              description="The system aggregates football data from multiple sources to build a reliable dataset for predictions:"
+            />
 
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-400">
               <li>
@@ -60,15 +61,14 @@ export default function AboutPage() {
                 Data is stored in <span className="text-white">PostgreSQL</span> to avoid repeated API calls and to maintain a local historical record.
               </li>
             </ul>
-          </div>
+          </Card>
 
           {/* Prediction model */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
-            <h2 className="text-xl font-semibold">Prediction Model</h2>
-
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              Predictions are generated using a deterministic Elo-based rating system:
-            </p>
+          <Card className="rounded-2xl p-6">
+            <SectionTitle
+              title="Prediction Model"
+              description="Predictions are generated using a deterministic Elo-based rating system:"
+            />
 
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-400">
               <li>
@@ -85,13 +85,13 @@ export default function AboutPage() {
             <p className="mt-4 text-sm text-slate-500">
               Predictions are precomputed and stored in the database rather than generated on every request.
             </p>
-          </div>
+          </Card>
 
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 md:col-span-2">
-            <h2 className="text-xl font-semibold">How Predictions Work</h2>
+          <Card className="rounded-2xl p-6 md:col-span-2">
+            <SectionTitle title="How Predictions Work" />
 
             <p className="mt-3 text-sm leading-7 text-slate-400">
-                Predictions are generated using an Elo-based rating system trained on historical match data.
+              Predictions are generated using an Elo-based rating system trained on historical match data.
             </p>
 
             <div className="mt-4 space-y-4 text-sm leading-7 text-slate-400">
@@ -117,16 +117,14 @@ export default function AboutPage() {
                 derived from historical data.
                 </p>
             </div>
-          </div>
+          </Card>
 
           {/* Architecture */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 md:col-span-2">
-            <h2 className="text-xl font-semibold">System Architecture</h2>
-
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              The system is designed as a full-stack, data-driven application with a clear separation between ingestion,
-              prediction, and presentation layers.
-            </p>
+          <Card className="rounded-2xl p-6 md:col-span-2">
+            <SectionTitle
+              title="System Architecture"
+              description="The system is designed as a full-stack, data-driven application with a clear separation between ingestion, prediction, and presentation layers."
+            />
 
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-400">
               <li>
@@ -142,15 +140,14 @@ export default function AboutPage() {
                 <span className="text-white">Docker Compose</span> orchestrates services for consistent local and production deployment.
               </li>
             </ul>
-          </div>
+          </Card>
 
           {/* refresh + performance */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 md:col-span-2">
-            <h2 className="text-xl font-semibold">Data Refresh & Optimisation</h2>
-
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              To manage external API limitations and ensure performance, the system uses a hybrid refresh strategy:
-            </p>
+          <Card className="rounded-2xl p-6 md:col-span-2">
+            <SectionTitle
+              title="Data Refresh & Optimisation"
+              description="To manage external API limitations and ensure performance, the system uses a hybrid refresh strategy:"
+            />
 
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-400">
               <li>
@@ -166,11 +163,11 @@ export default function AboutPage() {
                 Once matches are <span className="text-white">FINISHED</span>, live polling stops automatically and the system reverts to hourly updates.
               </li>
             </ul>
-          </div>
+          </Card>
 
           {/* tech stack */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 md:col-span-2">
-            <h2 className="text-xl font-semibold">Tech Stack</h2>
+          <Card className="rounded-2xl p-6 md:col-span-2">
+            <SectionTitle title="Tech Stack" />
 
             <ul className="mt-3 grid gap-2 text-sm text-slate-400 sm:grid-cols-2">
               <li>• NestJS (backend API + scheduler)</li>
@@ -181,7 +178,7 @@ export default function AboutPage() {
               <li>• football-data.org API (live match data)</li>
               <li>• Kaggle datasets (historical training data)</li>
             </ul>
-          </div>
+          </Card>
         </div>
       </div>
     </main>

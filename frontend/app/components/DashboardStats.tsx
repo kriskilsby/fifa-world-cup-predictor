@@ -1,4 +1,6 @@
-// frontend/components/DashboardStats.tsx
+import { Card } from "./ui/Card";
+import StatCard from "./ui/StatCard";
+
 type DashboardStatsProps = {
   exactScores: number;
   correctResults: number;
@@ -13,48 +15,15 @@ export default function DashboardStats({
   accuracy,
 }: DashboardStatsProps) {
   return (
-    <div className="mb-8 rounded-xl bg-slate-900 border border-slate-800 p-6">
-      <h2 className="text-xl font-bold mb-4">
-        Model Performance
-      </h2>
+    <Card className="mb-8 rounded-xl p-6">
+      <h2 className="mb-4 text-xl font-bold">Model Performance</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        <div>
-          <div className="text-green-400 text-3xl font-bold">
-            {exactScores}
-          </div>
-          <div className="text-sm text-gray-400">
-            Exact Scores
-          </div>
-        </div>
-
-        <div>
-          <div className="text-yellow-400 text-3xl font-bold">
-            {correctResults}
-          </div>
-          <div className="text-sm text-gray-400">
-            Correct Results
-          </div>
-        </div>
-
-        <div>
-          <div className="text-red-400 text-3xl font-bold">
-            {incorrectResults}
-          </div>
-          <div className="text-sm text-gray-400">
-            Incorrect
-          </div>
-        </div>
-
-        <div>
-          <div className="text-blue-400 text-3xl font-bold">
-            {accuracy}%
-          </div>
-          <div className="text-sm text-gray-400">
-            Accuracy
-          </div>
-        </div>
+      <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-4">
+        <StatCard value={exactScores} label="Exact Scores" valueClassName="text-green-400" />
+        <StatCard value={correctResults} label="Correct Results" valueClassName="text-yellow-400" />
+        <StatCard value={incorrectResults} label="Incorrect" valueClassName="text-red-400" />
+        <StatCard value={`${accuracy}%`} label="Accuracy" valueClassName="text-blue-400" />
       </div>
-    </div>
+    </Card>
   );
 }

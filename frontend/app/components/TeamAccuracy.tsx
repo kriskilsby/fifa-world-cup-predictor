@@ -1,4 +1,6 @@
-// frontend/app/components/TeamAccuracy.tsx
+import { Card } from "./ui/Card";
+import SectionTitle from "./ui/SectionTitle";
+
 type TeamStat = {
   team: string;
   correct: number;
@@ -14,13 +16,12 @@ export default function TeamAccuracy({
   teamStats,
 }: TeamAccuracyProps) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-sm sm:p-6">
-      <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-xl font-bold">Team Prediction Accuracy</h2>
-        <p className="text-sm text-slate-400">
-          Accuracy based on completed matches.
-        </p>
-      </div>
+    <Card className="rounded-2xl bg-slate-900/70 p-4 shadow-sm sm:p-6">
+      <SectionTitle
+        title="Team Prediction Accuracy"
+        description="Accuracy based on completed matches."
+        className="mb-4"
+      />
 
       <div className="grid max-h-[260px] grid-cols-2 gap-3 overflow-y-auto text-center sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {teamStats.map((team) => (
@@ -48,6 +49,6 @@ export default function TeamAccuracy({
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

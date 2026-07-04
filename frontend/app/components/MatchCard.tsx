@@ -1,6 +1,9 @@
 // frontend/app/components/MatchCard.tsx
+/* eslint-disable @next/next/no-img-element */
+
 import { Match } from "../types/match";
 import { Prediction } from "../types/prediction";
+import Badge from "./ui/Badge";
 
 type MatchCardProps = {
   match: Match;
@@ -191,13 +194,9 @@ export default function MatchCard({
           </span>
         )}
 
-        <span
-          className={`text-xs px-2 py-1 rounded font-bold ${getStatusColor(
-            status
-          )}`}
-        >
+        <Badge className={`px-2 py-1 text-xs font-bold text-white ${getStatusColor(status)}`}>
           {status}
-        </span>
+        </Badge>
       </div>
 
       {prediction && (

@@ -1,13 +1,12 @@
-// frontend/components/Filters.tsx
+import { Card } from "./ui/Card";
+import SectionTitle from "./ui/SectionTitle";
+
 type FiltersProps = {
   search: string;
   setSearch: (value: string) => void;
-
   selectedGroup: string;
   setSelectedGroup: (value: string) => void;
-
   groups: string[];
-
 };
 
 export default function Filters({
@@ -18,15 +17,12 @@ export default function Filters({
   groups,
 }: FiltersProps) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-sm sm:p-6">
-      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-bold">Filters</h2>
-          <p className="text-sm text-slate-400">
-            Narrow down the fixture list by team or group.
-          </p>
-        </div>
-      </div>
+    <Card className="rounded-2xl bg-slate-900/70 p-4 shadow-sm sm:p-6">
+      <SectionTitle
+        title="Filters"
+        description="Narrow down the fixture list by team or group."
+        className="mb-4"
+      />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <input
@@ -51,6 +47,6 @@ export default function Filters({
           ))}
         </select>
       </div>
-    </div>
+    </Card>
   );
 }
