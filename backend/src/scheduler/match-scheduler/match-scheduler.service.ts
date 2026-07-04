@@ -50,23 +50,15 @@ export class MatchSchedulerService implements OnModuleInit {
       }
 
       const now = new Date();
-      const startOfToday = new Date(now);
-      startOfToday.setUTCHours(0, 0, 0, 0);
 
-      const endOfToday = new Date(startOfToday);
-      endOfToday.setUTCDate(endOfToday.getUTCDate() + 1);
-
-      const todaysMatches = matches.filter((match) => {
-        const kickoff = new Date(match.utcDate);
-        return kickoff >= startOfToday && kickoff < endOfToday;
-      });
-
-      const shouldRefreshSoon = todaysMatches.some((match) => {
+      const shouldRefreshSoon = matches.some((match) => {
         const kickoff = new Date(match.utcDate);
         const windowEnd = new Date(kickoff.getTime() + 3 * 60 * 60 * 1000);
+        const isFinished = match.status === 'FINISHED';
 
         return (
-          ['TIMED', 'IN_PLAY'].includes(match.status) &&
+          !isFinished &&
+          ['TIMED', 'IN_PLAY', 'PAUSED'].includes(match.status) &&
           now >= kickoff &&
           now <= windowEnd
         );

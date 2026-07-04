@@ -1,4 +1,7 @@
+// frontend/app/layout.tsx
+// frontend/app/layout.tsx
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -27,7 +30,18 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        <Script
+          defer
+          data-domain="kriskilsby.com"
+          src="https://analytics.kriskilsby.com/js/script.js"
+          strategy="afterInteractive"
+        />
+      </head>
+
+      <body className="min-h-full flex flex-col">
+        {children}
+      </body>
     </html>
   );
 }

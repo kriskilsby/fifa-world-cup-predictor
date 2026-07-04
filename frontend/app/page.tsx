@@ -20,6 +20,7 @@ export default function HomePage() {
   const [selectedGroup, setSelectedGroup] = useState("ALL");
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [showQuickNav, setShowQuickNav] = useState(false);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -61,14 +62,35 @@ export default function HomePage() {
     }
   }, [API_URL]);
 
+  const refreshLiveData = useCallback(async () => {
+    await Promise.all([fetchMatches(), fetchPredictions()]);
+    setLastUpdatedAt(new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+  }, [fetchMatches, fetchPredictions]);
+
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      void fetchMatches();
-      void fetchPredictions();
+      void refreshLiveData();
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [fetchMatches, fetchPredictions]);
+  }, [refreshLiveData]);
+
+  useEffect(() => {
+    const liveMatchActive = matches.some((match) =>
+      ["TIMED", "IN_PLAY", "PAUSED"].includes(match.status) &&
+      new Date(match.utcDate) <= new Date()
+    );
+
+    if (!liveMatchActive) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      void refreshLiveData();
+    }, 5 * 60 * 1000);
+
+    return () => window.clearInterval(interval);
+  }, [matches, refreshLiveData]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -294,15 +316,25 @@ export default function HomePage() {
 
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-sm sm:p-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-400">
-            Tournament dashboard
-          </p>
-          <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
-            FIFA World Cup Predictor
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
-            AI-powered match predictions, tournament statistics and live results.
-          </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-400">
+                Tournament dashboard
+              </p>
+              <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
+                FIFA World Cup Predictor
+              </h1>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
+                AI-powered match predictions, tournament statistics and live results.
+              </p>
+            </div>
+
+            {lastUpdatedAt && (
+              <div className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-sm text-slate-400">
+                Updated {lastUpdatedAt}
+              </div>
+            )}
+          </div>
         </section>
 
         <DashboardStats
