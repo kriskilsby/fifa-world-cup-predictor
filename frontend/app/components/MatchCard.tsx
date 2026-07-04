@@ -101,125 +101,172 @@ export default function MatchCard({
 
   return (
     <div
-      className={`rounded-xl p-5 shadow-lg transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl transition-all duration-200 hover:border-blue-500 hover:shadow-xl flex flex-col gap-4 ${
+      className={`group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-2xl border p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
         status === "LIVE"
-          ? "bg-slate-900 border border-green-500"
-          : "bg-slate-900 border border-slate-800"
+          ? "border-green-500/70 bg-slate-900"
+          : "border-slate-800 bg-slate-900"
       }`}
     >
-      <div className="flex justify-between text-lg text-gray-400">
-        <span>
-          {new Date(match.utcDate).toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-500/40 to-transparent opacity-60 transition-opacity group-hover:opacity-100" />
 
-        <span className="font-medium text-gray-300">
-          {match.group?.replace("GROUP_", "Group ")}
-        </span>
-      </div>
+      <div className="flex items-start justify-between gap-4 text-sm text-slate-400">
+        <div className="space-y-1">
+          <div className="text-xs font-medium uppercase tracking-[0.22em] text-slate-500">
+            Match
+          </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img
-            src={match.homeTeam.crest}
-            alt={match.homeTeam.name}
-            className="w-8 h-8"
-          />
-          <span className="font-semibold">
-            {match.homeTeam.name}
+          <span className="font-medium text-slate-300">
+            {new Date(match.utcDate).toLocaleString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </span>
         </div>
 
-        {actualHome !== null && (
-          <span className="text-2xl font-bold">
-            {actualHome}
+        {match.group && (
+          <span className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
+            {match.group.replace("GROUP_", "Group ")}
           </span>
         )}
       </div>
 
-      <div className="text-center text-gray-400 text-sm">
+      <div className="flex flex-1 flex-col justify-center gap-4 py-2">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <img
+              src={match.homeTeam.crest}
+              alt={match.homeTeam.name}
+              className="h-10 w-10 shrink-0 rounded-full bg-white/5 object-contain p-0.5 ring-1 ring-white/10"
+            />
+
+            <span className="truncate text-base font-semibold text-slate-100 sm:text-lg">
+              {match.homeTeam.name}
+            </span>
+          </div>
+
+          {actualHome !== null && (
+            <span className="min-w-[3rem] text-right text-3xl font-semibold tracking-tight tabular-nums text-slate-50 sm:text-4xl">
+              {actualHome}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-center gap-3 text-center text-xs font-medium uppercase tracking-[0.3em] text-slate-500">
+          <span className="h-px flex-1 bg-slate-800/80" />
+
+          {status === "UPCOMING" ? (
+            <span>Kick off</span>
+          ) : status === "LIVE" ? (
+            <span>In progress</span>
+          ) : (
+            <span>Full time</span>
+          )}
+
+          <span className="h-px flex-1 bg-slate-800/80" />
+        </div>
+
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <img
+              src={match.awayTeam.crest}
+              alt={match.awayTeam.name}
+              className="h-10 w-10 shrink-0 rounded-full bg-white/5 object-contain p-0.5 ring-1 ring-white/10"
+            />
+
+            <span className="truncate text-base font-semibold text-slate-100 sm:text-lg">
+              {match.awayTeam.name}
+            </span>
+          </div>
+
+          {actualAway !== null && (
+            <span className="min-w-[3rem] text-right text-3xl font-semibold tracking-tight tabular-nums text-slate-50 sm:text-4xl">
+              {actualAway}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 border-t border-slate-800/80 pt-4 text-sm text-slate-400">
         {status === "UPCOMING" ? (
           <>
-            <div className="text-sm text-gray-500">
-              KICK OFF
+            <div className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+              Kick off
             </div>
 
-            <div className="text-xl font-bold text-blue-400">
-              {new Date(match.utcDate).toLocaleTimeString(
-                "en-GB",
-                {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }
-              )}
+            <div className="text-base font-semibold text-sky-400 tabular-nums">
+              {new Date(match.utcDate).toLocaleTimeString("en-GB", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </div>
           </>
         ) : (
-          <div>
-            {status === "LIVE"
-              ? "IN PROGRESS"
-              : "FULL TIME"}
+          <div className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+            {status === "LIVE" ? "In progress" : "Full time"}
           </div>
         )}
-      </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img
-            src={match.awayTeam.crest}
-            alt={match.awayTeam.name}
-            className="w-8 h-8"
-          />
-          <span className="font-semibold">
-            {match.awayTeam.name}
-          </span>
-        </div>
-
-        {actualAway !== null && (
-          <span className="text-2xl font-bold">
-            {actualAway}
-          </span>
-        )}
-      </div>
-
-      <div className="flex justify-end items-center gap-2">
         {status === "LIVE" && (
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+          <span className="relative flex h-2.5 w-2.5 shrink-0">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400/80 opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
           </span>
         )}
 
-        <Badge className={`px-2 py-1 text-xs font-bold text-white ${getStatusColor(status)}`}>
+        <Badge className={`px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white shadow-sm ${getStatusColor(status)}`}>
           {status}
         </Badge>
       </div>
 
       {prediction && (
-        <div className="mt-3 rounded-lg bg-slate-800 p-3 text-md border border-slate-700 text-center">
-          <div className="font-medium">
-            Prediction:
-            {" "}
-            {prediction.predictedHomeScore}
-            -
-            {prediction.predictedAwayScore}
+        <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/70 p-3.5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                Prediction
+              </div>
+
+              <div className="mt-1 text-xl font-semibold tracking-tight tabular-nums text-slate-100 sm:text-2xl">
+                {prediction.predictedHomeScore}
+                -
+                {prediction.predictedAwayScore}
+              </div>
+            </div>
+
+            <div className="text-right">
+              <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">
+                H win
+              </div>
+
+              <div className="mt-1 text-base font-semibold tabular-nums text-sky-400 sm:text-lg">
+                {(prediction.homeWinProbability * 100).toFixed(0)}%
+              </div>
+            </div>
           </div>
 
-          <div>
-            Home Win:
-            {" "}
-            {(prediction.homeWinProbability * 100).toFixed(0)}%
+          <div className="mt-3">
+            <div className="mb-1.5 flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500">
+              <span>Conf.</span>
+              <span>H edge</span>
+            </div>
+
+            <div className="h-1.5 overflow-hidden rounded-full bg-slate-800">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-sky-500 via-sky-400 to-emerald-400"
+                style={{ width: `${Math.max(0, Math.min(100, prediction.homeWinProbability * 100))}%` }}
+              />
+            </div>
           </div>
 
           {predictionResult && (
-            <div
-              className={`mt-2 font-semibold ${predictionResult.colour}`}
-            >
-              {predictionResult.label}
+            <div className="mt-2.5 flex justify-start">
+              <span
+                className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] ${predictionResult.colour} border-current/20 bg-slate-900/80`}
+              >
+                {predictionResult.label}
+              </span>
             </div>
           )}
         </div>
