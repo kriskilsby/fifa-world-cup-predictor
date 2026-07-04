@@ -23,16 +23,6 @@ export default function MatchCard({
 
   const status = getLiveStatus(match);
 
-  // function getStatusColor(status: string) {
-  //   switch (status) {
-  //     case "FINISHED":
-  //       return "bg-slate-600";
-  //     case "IN_PLAY":
-  //       return "bg-green-600";
-  //     default:
-  //       return "bg-blue-600";
-  //   }
-  // }
 
   function getStatusColor(status: string) {
     switch (status) {
@@ -46,19 +36,6 @@ export default function MatchCard({
         return "bg-blue-600";
     }
   }
-
-  // function getStatusText(status: string) {
-  //   switch (status) {
-  //     case "IN_PLAY":
-  //       return "LIVE";
-  //     case "FINISHED":
-  //       return "FT";
-  //     case "TIMED":
-  //       return "UPCOMING";
-  //     default:
-  //       return status;
-  //   }
-  // }
 
   function getPredictionResult(
     predictionHome: number,
