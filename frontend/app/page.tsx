@@ -321,7 +321,7 @@ export default function HomePage() {
               <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-400">
                 Tournament dashboard
               </p>
-              <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
+              <h1 className="mt-2 text-3xl font-bold sm:text-4xl text-green-200">
                 FIFA World Cup Predictor
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">

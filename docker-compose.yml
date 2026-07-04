@@ -16,14 +16,21 @@ services:
   fifa_frontend:
     build:
       context: ./frontend
+      target: dev
     container_name: fifa_frontend
     restart: unless-stopped
     env_file:
       - ./frontend/.env.production
     depends_on:
       - fifa_backend
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
     ports:
       - "3004:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     networks:
       - fifa_network
 

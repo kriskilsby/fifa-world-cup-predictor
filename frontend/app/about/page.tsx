@@ -13,7 +13,7 @@ export default function AboutPage() {
             About
           </p>
 
-          <h1 className="text-3xl font-bold sm:text-4xl">
+          <h1 className="text-3xl font-bold sm:text-4xl text-red-600">
             FIFA World Cup Predictor
           </h1>
 
