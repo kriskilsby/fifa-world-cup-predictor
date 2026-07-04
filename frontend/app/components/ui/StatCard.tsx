@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 
 type StatCardProps = {
   value: string | number;
   label: string;
   description?: string;
-  icon: JSX.Element;
+  icon: ReactNode;
   accentClassName: string;
   valueClassName?: string;
 };
