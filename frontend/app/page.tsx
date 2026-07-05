@@ -139,7 +139,14 @@ export default function HomePage() {
     };
   }
 
-  const groups = Array.from(new Set(matches.map((match) => getMatchPhase(match)).filter(Boolean)));
+  // const groups = Array.from(new Set(matches.map((match) => getMatchPhase(match)).filter(Boolean)));
+  const groups = Array.from(
+    new Set(
+      matches
+        .map((match) => getMatchPhase(match))
+        .filter((phase): phase is string => phase != null)
+    )
+  );
 
   const filteredMatches = useMemo(() => {
     return matches.filter((match) => {
