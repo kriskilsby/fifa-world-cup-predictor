@@ -33,12 +33,14 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
 
-        {/* Analytics script (correct placement) */}
-        <Script
-          src="https://analytics.kriskilsby.com/js/script.js"
-          data-domain="fifa.kriskilsby.com"
-          strategy="afterInteractive"
-        />
+        {/* Analytics script*/}
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            src="https://analytics.kriskilsby.com/js/script.js"
+            data-domain="fifa.kriskilsby.com"
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );
