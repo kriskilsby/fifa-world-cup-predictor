@@ -8,7 +8,8 @@ export type Team = {
 export type Match = {
   id: number;
   utcDate: string;
-  group: string;
+  group?: string | null;
+  stage?: string | null;
   status: string;
 
   homeTeam: Team;

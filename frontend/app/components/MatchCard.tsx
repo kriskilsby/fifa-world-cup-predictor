@@ -3,6 +3,7 @@
 
 import { Match } from "../types/match";
 import { Prediction } from "../types/prediction";
+import { formatMatchPhaseLabel, getMatchPhase } from "../utils/matchPhase";
 import Badge from "./ui/Badge";
 
 type MatchCardProps = {
@@ -25,6 +26,7 @@ export default function MatchCard({
   }
 
   const status = getLiveStatus(match);
+  const matchPhase = getMatchPhase(match);
 
 
   function getStatusColor(status: string) {
@@ -125,9 +127,9 @@ export default function MatchCard({
           </span>
         </div>
 
-        {match.group && (
+        {matchPhase && (
           <span className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-300">
-            {match.group.replace("GROUP_", "Group ")}
+            {formatMatchPhaseLabel(matchPhase)}
           </span>
         )}
       </div>

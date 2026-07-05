@@ -12,6 +12,7 @@ import { Card } from "./components/ui/Card";
 import SectionTitle from "./components/ui/SectionTitle";
 import { Match } from "./types/match";
 import { Prediction } from "./types/prediction";
+import { getMatchPhase } from "./utils/matchPhase";
 
 export default function HomePage() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -139,7 +140,7 @@ export default function HomePage() {
     };
   }
 
-  const groups = Array.from(new Set(matches.map((match) => match.group))).filter(Boolean);
+  const groups = Array.from(new Set(matches.map((match) => getMatchPhase(match)).filter(Boolean)));
 
   const filteredMatches = useMemo(() => {
     return matches.filter((match) => {
@@ -147,7 +148,8 @@ export default function HomePage() {
         match.homeTeam.name.toLowerCase().includes(search.toLowerCase()) ||
         match.awayTeam.name.toLowerCase().includes(search.toLowerCase());
 
-      const matchesGroup = selectedGroup === "ALL" || match.group === selectedGroup;
+      const matchPhase = getMatchPhase(match);
+      const matchesGroup = selectedGroup === "ALL" || matchPhase === selectedGroup;
 
       return matchesSearch && matchesGroup;
     });

@@ -19,7 +19,7 @@ export class Match {
   status!: string;
 
   @Column({ nullable: true })
-  stage?: string;
+  stage?: string | null;
 
   @Column({ nullable: true })
   matchday?: number;
@@ -38,5 +38,5 @@ export class Match {
   score?: any;
 
   @Column({ nullable: true })
-  group?: string;
+  group?: string | null;
 }

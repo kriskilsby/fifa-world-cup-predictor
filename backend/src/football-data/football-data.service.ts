@@ -41,11 +41,23 @@ type FootballDataMatchScore = {
   winner?: string | null;
 };
 
+type FootballDataMatchStage =
+  | 'GROUP_STAGE'
+  | 'PRELIMINARY_ROUND'
+  | 'PLAYOFF_ROUND_1'
+  | 'LAST_64'
+  | 'LAST_32'
+  | 'LAST_16'
+  | 'QUARTER_FINALS'
+  | 'SEMI_FINALS'
+  | 'THIRD_PLACE'
+  | 'FINAL';
+
 type FootballDataMatch = {
   id: number;
   utcDate: string;
   status: string;
-  stage: string;
+  stage: FootballDataMatchStage;
   group?: string | null;
   matchday?: number | null;
   score?: FootballDataMatchScore | null;
@@ -257,7 +269,7 @@ export class FootballDataService {
         existing.utcDate = new Date(match.utcDate);
         existing.status = match.status;
         existing.stage = match.stage;
-        existing.group = match.group ?? '';
+        existing.group = match.group ?? null;
         existing.matchday = match.matchday ?? 0;
 
         existing.score = match.score;
@@ -274,7 +286,7 @@ export class FootballDataService {
         utcDate: new Date(match.utcDate),
         status: match.status,
         stage: match.stage,
-        group: match.group ?? '',
+        group: match.group ?? null,
         matchday: match.matchday ?? 0,
         score: match.score,
         competition,
