@@ -101,7 +101,7 @@ export default function MatchCard({
 
   return (
     <div
-      className={`group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-2xl border p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+      className={`group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-2xl border p-4 shadow-lg transition-all duration-300 motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-2xl motion-reduce:transition-none sm:p-5 ${
         status === "LIVE"
           ? "border-green-500/70 bg-slate-900"
           : "border-slate-800 bg-slate-900"
@@ -109,7 +109,7 @@ export default function MatchCard({
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-500/40 to-transparent opacity-60 transition-opacity group-hover:opacity-100" />
 
-      <div className="flex items-start justify-between gap-4 text-sm text-slate-400">
+      <div className="flex items-start justify-between gap-3 text-sm text-slate-400 sm:gap-4">
         <div className="space-y-1">
           <div className="text-xs font-medium uppercase tracking-[0.22em] text-slate-500">
             Match
@@ -132,28 +132,28 @@ export default function MatchCard({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col justify-center gap-4 py-2">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-          <div className="flex min-w-0 items-center gap-3">
+      <div className="flex flex-1 flex-col justify-center gap-3 py-2 sm:gap-4">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
             <img
               src={match.homeTeam.crest}
               alt={match.homeTeam.name}
-              className="h-10 w-10 shrink-0 rounded-full bg-white/5 object-contain p-0.5 ring-1 ring-white/10"
+              className="h-9 w-9 shrink-0 rounded-full bg-white/5 object-contain p-0.5 ring-1 ring-white/10 sm:h-10 sm:w-10"
             />
 
-            <span className="truncate text-base font-semibold text-slate-100 sm:text-lg">
+            <span className="truncate text-sm font-semibold text-slate-100 sm:text-base lg:text-lg">
               {match.homeTeam.name}
             </span>
           </div>
 
           {actualHome !== null && (
-            <span className="min-w-[3rem] text-right text-3xl font-semibold tracking-tight tabular-nums text-slate-50 sm:text-4xl">
+            <span className="min-w-[2.5rem] text-right text-2xl font-semibold tracking-tight tabular-nums text-slate-50 sm:min-w-[3rem] sm:text-3xl lg:text-4xl">
               {actualHome}
             </span>
           )}
         </div>
 
-        <div className="flex items-center justify-center gap-3 text-center text-xs font-medium uppercase tracking-[0.3em] text-slate-500">
+        <div className="flex items-center justify-center gap-2.5 text-center text-[10px] font-medium uppercase tracking-[0.28em] text-slate-500 sm:gap-3 sm:text-xs">
           <span className="h-px flex-1 bg-slate-800/80" />
 
           {status === "UPCOMING" ? (
@@ -167,28 +167,28 @@ export default function MatchCard({
           <span className="h-px flex-1 bg-slate-800/80" />
         </div>
 
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-          <div className="flex min-w-0 items-center gap-3">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
             <img
               src={match.awayTeam.crest}
               alt={match.awayTeam.name}
-              className="h-10 w-10 shrink-0 rounded-full bg-white/5 object-contain p-0.5 ring-1 ring-white/10"
+              className="h-9 w-9 shrink-0 rounded-full bg-white/5 object-contain p-0.5 ring-1 ring-white/10 sm:h-10 sm:w-10"
             />
 
-            <span className="truncate text-base font-semibold text-slate-100 sm:text-lg">
+            <span className="truncate text-sm font-semibold text-slate-100 sm:text-base lg:text-lg">
               {match.awayTeam.name}
             </span>
           </div>
 
           {actualAway !== null && (
-            <span className="min-w-[3rem] text-right text-3xl font-semibold tracking-tight tabular-nums text-slate-50 sm:text-4xl">
+            <span className="min-w-[2.5rem] text-right text-2xl font-semibold tracking-tight tabular-nums text-slate-50 sm:min-w-[3rem] sm:text-3xl lg:text-4xl">
               {actualAway}
             </span>
           )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-t border-slate-800/80 pt-4 text-sm text-slate-400">
+      <div className="flex items-center justify-between gap-3 border-t border-slate-800/80 pt-3 text-sm text-slate-400 sm:pt-4">
         {status === "UPCOMING" ? (
           <>
             <div className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
@@ -221,7 +221,7 @@ export default function MatchCard({
       </div>
 
       {prediction && (
-        <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/70 p-3.5">
+        <div className="mt-3 rounded-xl border border-slate-800 bg-slate-950/70 p-3.5 sm:mt-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-500">

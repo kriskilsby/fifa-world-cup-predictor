@@ -26,7 +26,7 @@ export default function Header({
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur supports-[backdrop-filter]:bg-slate-950/75">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8 lg:py-4">
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -44,7 +44,7 @@ export default function Header({
                 type="button"
                 aria-label="Toggle search"
                 onClick={() => setSearchOpen((open) => !open)}
-                className="rounded-full border border-slate-700 bg-slate-900 p-2 text-slate-200"
+                className="rounded-full border border-slate-700 bg-slate-900 p-2 text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               >
                 🔎
               </button>
@@ -55,7 +55,7 @@ export default function Header({
               aria-label="Toggle navigation"
               aria-expanded={mobileMenuOpen}
               onClick={() => setMobileMenuOpen((open) => !open)}
-              className="rounded-full border border-slate-700 bg-slate-900 p-2 text-slate-200"
+                className="rounded-full border border-slate-700 bg-slate-900 p-2 text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             >
               <span className="block h-5 w-5">
                 <span className="mb-1 block h-0.5 w-full bg-current" />
@@ -82,7 +82,7 @@ export default function Header({
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`rounded-full px-3 py-2 text-sm font-medium transition ${
+                      className={`rounded-full px-3 py-2 text-sm font-medium transition focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
                         isActive
                           ? "bg-blue-600 text-white"
                           : "bg-slate-950 text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -104,7 +104,7 @@ export default function Header({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`rounded-full px-3 py-2 text-sm font-medium transition ${
+                  className={`rounded-full px-3 py-2 text-sm font-medium transition focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
                     isActive
                       ? "bg-blue-600 text-white"
                       : "bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -129,7 +129,7 @@ export default function Header({
                   value={search}
                   onChange={(e) => setSearch?.(e.target.value)}
                   placeholder="Search teams..."
-                  className="w-full rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-500 transition hover:border-slate-500 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                 />
               </label>
             </div>

@@ -29,45 +29,51 @@ export default function TeamAccuracy({
         </p>
       </div>
 
-      <div className="grid max-h-[260px] grid-cols-2 gap-3 overflow-y-auto text-center sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {teamStats.map((team) => (
-          <div
-            key={team.team}
-            className="rounded-lg border border-slate-700 bg-slate-800 p-3"
-          >
-            <div className="truncate text-sm font-medium text-slate-100">{team.team}</div>
+      {teamStats.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/50 px-4 py-8 text-center">
+          <p className="text-base font-semibold text-slate-100">No completed matches yet.</p>
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-400">
+            Team accuracy will appear once fixtures finish and results are available to evaluate.
+          </p>
+        </div>
+      ) : (
+        <div className="grid max-h-[260px] grid-cols-2 gap-3 overflow-y-auto text-center sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {teamStats.map((team) => (
+            <div key={team.team} className="rounded-lg border border-slate-700 bg-slate-800 p-3 transition hover:border-slate-500 hover:bg-slate-700/80">
+              <div className="truncate text-sm font-medium text-slate-100">{team.team}</div>
 
-            <div
-              className={`text-xl font-bold ${
-                team.accuracy >= 70
-                  ? "text-green-400"
-                  : team.accuracy >= 40
-                  ? "text-yellow-400"
-                  : "text-red-400"
-              }`}
-            >
-              {team.accuracy.toFixed(0)}%
-            </div>
-
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-700" aria-hidden="true">
               <div
-                className={`h-full rounded-full ${
+                className={`text-xl font-bold ${
                   team.accuracy >= 70
-                    ? "bg-green-400"
+                    ? "text-green-400"
                     : team.accuracy >= 40
-                    ? "bg-yellow-400"
-                    : "bg-red-400"
+                    ? "text-yellow-400"
+                    : "text-red-400"
                 }`}
-                style={{ width: `${Math.max(4, team.accuracy)}%` }}
-              />
-            </div>
+              >
+                {team.accuracy.toFixed(0)}%
+              </div>
 
-            <div className="mt-2 text-xs text-slate-500">
-              {team.correct}/{team.total} correct
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-700" aria-hidden="true">
+                <div
+                  className={`h-full rounded-full ${
+                    team.accuracy >= 70
+                      ? "bg-green-400"
+                      : team.accuracy >= 40
+                      ? "bg-yellow-400"
+                      : "bg-red-400"
+                  }`}
+                  style={{ width: `${Math.max(4, team.accuracy)}%` }}
+                />
+              </div>
+
+              <div className="mt-2 text-xs text-slate-500">
+                {team.correct}/{team.total} correct
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }

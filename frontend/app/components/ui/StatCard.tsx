@@ -70,17 +70,17 @@ export default function StatCard({
 
   return (
     <article
-      className={`group relative flex h-full min-h-[170px] flex-col overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-950/70 p-5 text-left shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-700 hover:bg-slate-900/80 hover:shadow-[0_16px_40px_rgba(15,23,42,0.35)] ${accentClassName}`.trim()}
+      className={`group relative flex h-full min-h-[170px] flex-col overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-950/70 p-4 text-left shadow-sm transition duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:border-slate-700 motion-safe:hover:bg-slate-900/80 motion-safe:hover:shadow-[0_16px_40px_rgba(15,23,42,0.35)] motion-reduce:transition-none sm:p-5 ${accentClassName}`.trim()}
     >
       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-60 transition-opacity group-hover:opacity-100" />
 
-      <div className="mb-5 flex min-h-[5.5rem] items-start justify-between gap-4 xl:min-h-[6rem]">
+      <div className="mb-4 flex min-h-[5.25rem] items-start justify-between gap-4 xl:min-h-[6rem]">
         <div className="min-h-[3.5rem]">
           <div className="text-sm font-medium uppercase tracking-[0.2em] text-slate-400">{label}</div>
           {description && <div className="mt-1 text-sm leading-5 text-slate-500">{description}</div>}
         </div>
 
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-700/80 bg-white/5 text-slate-100 shadow-inner transition group-hover:scale-105 group-hover:bg-white/10">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-700/80 bg-white/5 text-slate-100 shadow-inner transition motion-safe:group-hover:scale-105 motion-safe:group-hover:bg-white/10 motion-reduce:transition-none">
           {icon}
         </div>
       </div>

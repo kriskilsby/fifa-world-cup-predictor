@@ -3,6 +3,9 @@ import Header from "../components/Header";
 import { Card } from "../components/ui/Card";
 import SectionTitle from "../components/ui/SectionTitle";
 
+const externalLinkClassName =
+  "inline-flex items-center gap-1 text-white underline decoration-slate-500 underline-offset-4 transition hover:text-blue-300 hover:decoration-blue-300 focus-visible:text-blue-300 focus-visible:decoration-blue-300 focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950";
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -33,27 +36,27 @@ export default function AboutPage() {
               description="The system aggregates football data from multiple sources to build a reliable dataset for predictions:"
             />
 
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-400">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-7 text-slate-400">
               <li>
                 <a
-                    href="https://www.kaggle.com/datasets/martj42/international-football-results-from-1872-to-2017"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white hover:text-blue-400 underline"
+                  href="https://www.kaggle.com/datasets/martj42/international-football-results-from-1872-to-2017"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={externalLinkClassName}
                 >
-                    Kaggle dataset
+                  Kaggle dataset
                 </a>
                 : used for historical international match results and baseline statistical data.
               </li>
 
               <li>
                 <a
-                    href="https://www.football-data.org/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white hover:text-blue-400 underline"
+                  href="https://www.football-data.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={externalLinkClassName}
                 >
-                    football-data.org API
+                  football-data.org API
                 </a>
                 : provides live tournament fixtures, scores, and match status updates.
               </li>
@@ -95,27 +98,27 @@ export default function AboutPage() {
             </p>
 
             <div className="mt-4 space-y-4 text-sm leading-7 text-slate-400">
-                <p>
+              <p>
                 Team ratings are initially set to <span className="text-white">1500 Elo</span> and then calibrated using a
                 bootstrap process, which replays historical match results chronologically. Each match updates team strength using
                 the standard Elo update formula, with a fixed <span className="text-white">K-factor of 32</span>.
-                </p>
+              </p>
 
-                <p>
+              <p>
                 Once trained, these ratings are stored in <span className="text-white">PostgreSQL</span> and used as the foundation
                 for live predictions.
-                </p>
+              </p>
 
-                <p>
+              <p>
                 For upcoming fixtures, the system calculates expected outcomes using the Elo probability formula, converting rating
                 differences into win probabilities. These probabilities are then mapped into deterministic scorelines using a rule-based
                 threshold system.
-                </p>
+              </p>
 
-                <p>
+              <p>
                 This ensures predictions are both explainable and consistent, while still reflecting long-term team performance trends
                 derived from historical data.
-                </p>
+              </p>
             </div>
           </Card>
 

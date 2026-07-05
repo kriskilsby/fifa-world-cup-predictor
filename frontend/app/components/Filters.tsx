@@ -30,13 +30,13 @@ export default function Filters({
           placeholder="Search teams..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-sm text-white placeholder:text-slate-500 transition hover:border-slate-500 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
         />
 
         <select
           value={selectedGroup}
           onChange={(e) => setSelectedGroup(e.target.value)}
-          className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-sm text-white focus:border-blue-500 focus:outline-none"
+          className="rounded-lg border border-slate-700 bg-slate-800 p-3 text-sm text-white transition hover:border-slate-500 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
         >
           <option value="ALL">All Groups</option>
 

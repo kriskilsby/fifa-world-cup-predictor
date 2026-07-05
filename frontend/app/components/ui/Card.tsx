@@ -13,14 +13,20 @@ type CardSectionProps = {
 
 export function Card({ children, className = "", as: Component = "div" }: CardProps) {
   return (
-    <Component className={`border border-slate-800 bg-slate-900 ${className}`.trim()}>
+    <Component
+      className={`border border-slate-800 bg-slate-900 transition-colors duration-200 ${className}`.trim()}
+    >
       {children}
     </Component>
   );
 }
 
 export function CardHeader({ children, className = "" }: CardSectionProps) {
-  return <div className={`border-b border-slate-800 px-6 py-5 ${className}`.trim()}>{children}</div>;
+  return (
+    <div className={`border-b border-slate-800 px-6 py-5 ${className}`.trim()}>
+      {children}
+    </div>
+  );
 }
 
 export function CardContent({ children, className = "" }: CardSectionProps) {

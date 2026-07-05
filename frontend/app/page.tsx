@@ -22,6 +22,8 @@ export default function HomePage() {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [showQuickNav, setShowQuickNav] = useState(false);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
+  const isInitialLoading = loading && matches.length === 0;
+  const isRefreshing = loading && matches.length > 0;
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -255,75 +257,134 @@ export default function HomePage() {
 
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <Card className="rounded-2xl bg-slate-900/70 p-6 shadow-sm sm:p-8">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-400">
                 Tournament dashboard
               </p>
               <h1 className="mt-2 text-3xl font-bold sm:text-4xl">FIFA World Cup Predictor</h1>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
-                AI-powered match predictions, tournament statistics and live results.
+                Data-driven match predictions, tournament statistics and live results.
               </p>
             </div>
 
-            {lastUpdatedAt && (
-              <div className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-sm text-slate-400">
-                Updated {lastUpdatedAt}
-              </div>
-            )}
+            <div className="flex flex-col items-start gap-2 sm:items-end">
+              {isRefreshing && (
+                <div className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-sm text-slate-300">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-sky-400" aria-hidden="true" />
+                  Refreshing live data
+                </div>
+              )}
+
+              {lastUpdatedAt && (
+                <div className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-sm text-slate-400">
+                  Updated {lastUpdatedAt}
+                </div>
+              )}
+            </div>
           </div>
         </Card>
 
-        <DashboardStats
-          exactScores={exactScores}
-          correctResults={correctResults}
-          incorrectResults={incorrectResults}
-          accuracy={accuracy}
-        />
+        {isInitialLoading ? (
+          <>
+            <LoadingDashboardStats />
+            <LoadingTeamAccuracy />
+            <LoadingFilters />
+          </>
+        ) : (
+          <>
+            <DashboardStats
+              exactScores={exactScores}
+              correctResults={correctResults}
+              incorrectResults={incorrectResults}
+              accuracy={accuracy}
+            />
 
-        <TeamAccuracy teamStats={teamStats} />
+            <TeamAccuracy teamStats={teamStats} />
 
-        <Filters
-          search={search}
-          setSearch={setSearch}
-          selectedGroup={selectedGroup}
-          setSelectedGroup={setSelectedGroup}
-          groups={groups}
-        />
-
-        {loading && (
-          <div className="flex justify-center py-12">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-blue-500" />
-          </div>
+            <Filters
+              search={search}
+              setSearch={setSearch}
+              selectedGroup={selectedGroup}
+              setSelectedGroup={setSelectedGroup}
+              groups={groups}
+            />
+          </>
         )}
 
         {error && (
-          <div className="mb-4 rounded-xl border border-red-700 bg-red-900/40 p-4 text-white">
-            <p className="mb-3">{error}</p>
+          <div className="rounded-2xl border border-red-500/40 bg-red-950/40 p-4 text-white shadow-sm sm:p-5" role="alert">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-300">
+                  Could not refresh fixtures
+                </p>
+                <p className="text-sm leading-6 text-red-100/90">{error}</p>
+              </div>
 
-            <button onClick={fetchMatches} className="rounded bg-red-700 px-3 py-2 transition hover:bg-red-600">
-              Retry
-            </button>
+              <button
+                type="button"
+                onClick={fetchMatches}
+                className="inline-flex items-center justify-center rounded-full border border-red-400/40 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-50 transition hover:border-red-300 hover:bg-red-500/20 focus-visible:ring-2 focus-visible:ring-red-300/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              >
+                Retry
+              </button>
+            </div>
           </div>
         )}
 
-        <section id="matches-section">
+        <section id="matches-section" className="scroll-mt-24">
           <Card className="rounded-2xl bg-slate-900/70 p-4 sm:p-6">
             <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <SectionTitle title="Matches" description="Browse live and completed fixtures with predictions." />
 
-              <span className="text-sm text-slate-400">{filteredMatches.length} matches</span>
+              <span className="text-sm text-slate-400">
+                {matches.length > 0 ? `${filteredMatches.length} matches` : "No fixtures loaded yet"}
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {filteredMatches.map((match) => (
-                <MatchCard key={match.id} match={match} prediction={predictionMap.get(match.id)} />
-              ))}
-            </div>
-
-            {!loading && matches.length === 0 && (
-              <div className="mt-6 rounded-xl border border-dashed border-slate-700 bg-slate-950/60 p-6 text-center text-slate-400">
-                No matches found for the current selection.
+            {isInitialLoading ? (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <MatchCardSkeleton key={index} />
+                ))}
+              </div>
+            ) : matches.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-6 text-center sm:p-8">
+                <p className="text-base font-semibold text-slate-100">No fixtures are available yet.</p>
+                <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-400">
+                  Once match data is published, fixtures and predictions will appear here automatically.
+                </p>
+                <button
+                  type="button"
+                  onClick={fetchMatches}
+                  className="mt-5 inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                >
+                  Refresh data
+                </button>
+              </div>
+            ) : filteredMatches.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 p-6 text-center sm:p-8">
+                <p className="text-base font-semibold text-slate-100">No matches match your filters.</p>
+                <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-400">
+                  Try a different team search or group to reveal fixtures again.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch("");
+                    setSelectedGroup("ALL");
+                  }}
+                  className="mt-5 inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {filteredMatches.map((match) => (
+                  <MatchCard key={match.id} match={match} prediction={predictionMap.get(match.id)} />
+                ))}
               </div>
             )}
           </Card>
@@ -351,5 +412,137 @@ export default function HomePage() {
         </button>
       </div>
     </main>
+  );
+}
+
+function LoadingDashboardStats() {
+  return (
+    <Card className="relative overflow-hidden rounded-3xl border-slate-800/80 bg-slate-950/80 p-5 sm:p-6" aria-hidden="true">
+      <div className="animate-pulse space-y-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-3">
+            <div className="h-4 w-44 rounded-full bg-slate-800" />
+            <div className="h-8 w-72 rounded-full bg-slate-800" />
+          </div>
+          <div className="h-4 w-full max-w-md rounded-full bg-slate-800 sm:w-80" />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="h-44 rounded-2xl border border-slate-800 bg-slate-900/80" />
+          ))}
+        </div>
+
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="space-y-2">
+              <div className="h-4 w-40 rounded-full bg-slate-800" />
+              <div className="h-4 w-56 rounded-full bg-slate-800" />
+            </div>
+            <div className="h-4 w-48 rounded-full bg-slate-800" />
+          </div>
+          <div className="mt-4 h-4 w-full rounded-full bg-slate-800" />
+          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="h-24 rounded-xl border border-slate-800 bg-slate-900/70" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function LoadingTeamAccuracy() {
+  return (
+    <Card className="rounded-2xl bg-slate-900/70 p-4 shadow-sm sm:p-6" aria-hidden="true">
+      <div className="animate-pulse space-y-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-3">
+            <div className="h-4 w-40 rounded-full bg-slate-800" />
+            <div className="h-7 w-72 rounded-full bg-slate-800" />
+          </div>
+          <div className="h-4 w-full max-w-md rounded-full bg-slate-800 sm:w-80" />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <div key={index} className="h-32 rounded-lg border border-slate-800 bg-slate-800/80" />
+          ))}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function LoadingFilters() {
+  return (
+    <Card className="rounded-2xl bg-slate-900/70 p-4 shadow-sm sm:p-6" aria-hidden="true">
+      <div className="animate-pulse space-y-4">
+        <div className="space-y-3">
+          <div className="h-4 w-32 rounded-full bg-slate-800" />
+          <div className="h-7 w-56 rounded-full bg-slate-800" />
+          <div className="h-4 w-full max-w-lg rounded-full bg-slate-800" />
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="h-12 rounded-lg border border-slate-800 bg-slate-800/80" />
+          <div className="h-12 rounded-lg border border-slate-800 bg-slate-800/80" />
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function MatchCardSkeleton() {
+  return (
+    <div className="relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-lg" aria-hidden="true">
+      <div className="animate-pulse space-y-5">
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-3">
+            <div className="h-3 w-20 rounded-full bg-slate-800" />
+            <div className="h-4 w-36 rounded-full bg-slate-800" />
+          </div>
+          <div className="h-8 w-20 rounded-full bg-slate-800" />
+        </div>
+
+        <div className="space-y-5 py-2">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-slate-800" />
+            <div className="h-5 flex-1 rounded-full bg-slate-800" />
+            <div className="h-8 w-12 rounded-full bg-slate-800" />
+          </div>
+
+          <div className="mx-auto h-3 w-36 rounded-full bg-slate-800" />
+
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-slate-800" />
+            <div className="h-5 flex-1 rounded-full bg-slate-800" />
+            <div className="h-8 w-12 rounded-full bg-slate-800" />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-slate-800 pt-4">
+          <div className="h-3 w-24 rounded-full bg-slate-800" />
+          <div className="h-5 w-14 rounded-full bg-slate-800" />
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3.5">
+          <div className="flex items-center justify-between gap-3">
+            <div className="space-y-2">
+              <div className="h-3 w-24 rounded-full bg-slate-800" />
+              <div className="h-6 w-20 rounded-full bg-slate-800" />
+            </div>
+            <div className="space-y-2 text-right">
+              <div className="h-3 w-14 rounded-full bg-slate-800" />
+              <div className="h-5 w-12 rounded-full bg-slate-800" />
+            </div>
+          </div>
+
+          <div className="mt-3 h-1.5 rounded-full bg-slate-800" />
+          <div className="mt-3 h-6 w-32 rounded-full bg-slate-800" />
+        </div>
+      </div>
+    </div>
   );
 }
