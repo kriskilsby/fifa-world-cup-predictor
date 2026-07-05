@@ -4,7 +4,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import DashboardStats from "./components/DashboardStats";
-import Filters from "./components/Filters";
 import Header from "./components/Header";
 import MatchCard from "./components/MatchCard";
 import TeamAccuracy from "./components/TeamAccuracy";
@@ -255,7 +254,14 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <Header showSearch search={search} setSearch={setSearch} />
+      <Header
+        showSearch
+        search={search}
+        setSearch={setSearch}
+        selectedGroup={selectedGroup}
+        setSelectedGroup={setSelectedGroup}
+        groups={groups}
+      />
 
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <Card className="rounded-2xl bg-slate-900/70 p-6 shadow-sm sm:p-8">
@@ -291,7 +297,6 @@ export default function HomePage() {
           <>
             <LoadingDashboardStats />
             <LoadingTeamAccuracy />
-            <LoadingFilters />
           </>
         ) : (
           <>
@@ -303,14 +308,6 @@ export default function HomePage() {
             />
 
             <TeamAccuracy teamStats={teamStats} />
-
-            <Filters
-              search={search}
-              setSearch={setSearch}
-              selectedGroup={selectedGroup}
-              setSelectedGroup={setSelectedGroup}
-              groups={groups}
-            />
           </>
         )}
 
@@ -471,25 +468,6 @@ function LoadingTeamAccuracy() {
           {Array.from({ length: 10 }).map((_, index) => (
             <div key={index} className="h-32 rounded-lg border border-slate-800 bg-slate-800/80" />
           ))}
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-function LoadingFilters() {
-  return (
-    <Card className="rounded-2xl bg-slate-900/70 p-4 shadow-sm sm:p-6" aria-hidden="true">
-      <div className="animate-pulse space-y-4">
-        <div className="space-y-3">
-          <div className="h-4 w-32 rounded-full bg-slate-800" />
-          <div className="h-7 w-56 rounded-full bg-slate-800" />
-          <div className="h-4 w-full max-w-lg rounded-full bg-slate-800" />
-        </div>
-
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="h-12 rounded-lg border border-slate-800 bg-slate-800/80" />
-          <div className="h-12 rounded-lg border border-slate-800 bg-slate-800/80" />
         </div>
       </div>
     </Card>

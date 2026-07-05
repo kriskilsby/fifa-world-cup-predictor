@@ -4,6 +4,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { formatMatchPhaseLabel } from "../utils/matchPhase";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -14,12 +15,18 @@ type HeaderProps = {
   showSearch?: boolean;
   search?: string;
   setSearch?: (value: string) => void;
+  selectedGroup?: string;
+  setSelectedGroup?: (value: string) => void;
+  groups?: string[];
 };
 
 export default function Header({
   showSearch = false,
   search = "",
   setSearch,
+  selectedGroup = "ALL",
+  setSelectedGroup,
+  groups = [],
 }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -96,44 +103,66 @@ export default function Header({
             </nav>
           </div>
 
-          <nav className="hidden flex-wrap gap-2 lg:flex lg:flex-row lg:items-center">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
+          <div className="flex flex-col gap-3 lg:flex-1 lg:flex-row lg:items-center lg:justify-end lg:gap-3">
+            <nav className="hidden flex-wrap gap-2 lg:flex lg:flex-row lg:items-center">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
 
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`rounded-full px-3 py-2 text-sm font-medium transition focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
-                    isActive
-                      ? "bg-blue-600 text-white"
-                      : "bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white"
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`rounded-full px-3 py-2 text-sm font-medium transition focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
+                      isActive
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="grid gap-3 lg:grid-flow-col lg:items-center lg:gap-3">
+              {showSearch && (
+                <div
+                  className={`grid overflow-hidden transition-all duration-300 ease-out lg:block ${
+                    searchOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0 lg:grid-rows-[1fr] lg:opacity-100"
                   }`}
                 >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+                  <label className="overflow-hidden lg:w-72">
+                    <span className="sr-only">Search teams</span>
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch?.(e.target.value)}
+                      placeholder="Search teams..."
+                      className="w-full rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-500 transition hover:border-slate-500 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                    />
+                  </label>
+                </div>
+              )}
 
-          {showSearch && (
-            <div
-              className={`grid overflow-hidden transition-all duration-300 ease-out lg:block ${
-                searchOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 lg:grid-rows-[1fr] lg:opacity-100"
-              }`}
-            >
-              <label className="overflow-hidden lg:w-72">
-                <span className="sr-only">Search teams</span>
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch?.(e.target.value)}
-                  placeholder="Search teams..."
-                  className="w-full rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-500 transition hover:border-slate-500 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-                />
+              <label className="w-full lg:w-52">
+                <span className="sr-only">Select phase</span>
+                <select
+                  value={selectedGroup}
+                  onChange={(e) => setSelectedGroup?.(e.target.value)}
+                  className="w-full rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white transition hover:border-slate-500 focus:border-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                >
+                  <option value="ALL">All phases</option>
+                  {groups.map((group) => (
+                    <option key={group} value={group}>
+                      {formatMatchPhaseLabel(group)}
+                    </option>
+                  ))}
+                </select>
               </label>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </header>
