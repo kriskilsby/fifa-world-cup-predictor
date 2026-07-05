@@ -18,7 +18,7 @@ export class Match {
   @Column()
   status!: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   stage?: string | null;
 
   @Column({ nullable: true })
@@ -37,6 +37,6 @@ export class Match {
   @Column({ type: 'json', nullable: true })
   score?: any;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   group?: string | null;
 }
