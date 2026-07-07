@@ -15,9 +15,19 @@ async function bootstrap() {
   //   origin: ['http://localhost:3004', 'https://fifa.kriskilsby.com'],
   // });
 
+  // app.enableCors({
+  //   origin: [
+  //     process.env.FRONTEND_URL,
+  //     'http://localhost:3000',
+  //     'http://localhost:3004',
+  //   ],
+  //   credentials: true,
+  // });
+
   app.enableCors({
     origin: [
-      process.env.FRONTEND_URL,
+      'https://fifa.kriskilsby.com',
+      'https://www.fifa.kriskilsby.com',
       'http://localhost:3000',
       'http://localhost:3004',
     ],
