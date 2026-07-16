@@ -46,6 +46,10 @@ export class MatchesService {
 
     const matches = await this.footballDataService.getWorldCupMatches();
 
+    console.log('========== LAST 4 MATCHES FROM API ==========');
+    console.log(JSON.stringify(matches.matches.slice(-4), null, 2));
+    console.log('=============================================');
+
     const importResult = await this.footballDataService.importWorldCupMatches(
       matches.matches,
     );

@@ -38,14 +38,27 @@ export class MatchSchedulerService implements OnModuleInit {
       await this.matchesService.refreshMatches();
 
       const matches = await this.matchesService.findAll();
-      const allMatchesFinished =
-        matches.length > 0 &&
-        matches.every((match) => match.status === 'FINISHED');
+      // const allMatchesFinished =
+      //   matches.length > 0 &&
+      //   matches.every((match) => match.status === 'FINISHED');
 
-      if (allMatchesFinished) {
+      // if (allMatchesFinished) {
+      //   this.tournamentComplete = true;
+      //   this.clearFollowUpRefresh();
+      //   this.logger.log('🏆 Tournament complete. Stopping scheduler.');
+      //   return;
+      // }
+
+      // Make sure it picks up the last matches
+      const finalMatch = matches.find((match) => match.stage === 'FINAL');
+
+      const tournamentComplete =
+        finalMatch !== undefined && finalMatch.status === 'FINISHED';
+
+      if (tournamentComplete) {
         this.tournamentComplete = true;
         this.clearFollowUpRefresh();
-        this.logger.log('🏆 Tournament complete. Stopping scheduler.');
+        this.logger.log('🏆 World Cup Final completed. Stopping scheduler.');
         return;
       }
 
